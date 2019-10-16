@@ -19,13 +19,12 @@
 */
 
 /**
- * Copyright (C) 2006-2019 Tobias Leupold <tobias.leupold@web.de>
+ * The b8 spam filter library
  *
  * @license LGPL 2.1
- * @access public
  * @package b8
- * @author Tobias Leupold
- * @author Oliver Lillie (original PHP 5 port)
+ * @author Tobias Leupold <tobias.leupold@gmx.de>
+ * @author Oliver Lillie <ollie@buggedcom.co.uk> (original PHP 5 port)
  */
 
 class b8

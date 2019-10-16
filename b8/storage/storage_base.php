@@ -19,13 +19,11 @@
 */
 
 /**
- * Functions used by all storage backends
- * Copyright (C) 2010-2014 Tobias Leupold <tobias.leupold@web.de>
+ * Abstract base class for storage backends
  *
  * @license LGPL 2.1
- * @access public
  * @package b8
- * @author Tobias Leupold
+ * @author Tobias Leupold <tobias.leupold@gmx.de>
  */
 
 abstract class b8_storage_base

@@ -19,15 +19,14 @@
 */
 
 /**
- * The MySQL backend for communicating with the database, using the new mysqli interface
- * Copyright (C) 2014 Tobias Leupold <tobias.leupold@web.de>
+ * A MySQL storage backend
  *
  * @license LGPL 2.1
  * @access public
  * @package b8
- * @author Oliver Lillie (original PHP 5 mysql backend)
- * @author Tobias Leupold
- * @author Lorenzo Masetti (update to mysqli with the help of the MySQL ext/mysql Converter Tool)
+ * @author Oliver Lillie <ollie@buggedcom.co.uk> (original PHP 5 port)
+ * @author Tobias Leupold <tobias.leupold@gmx.de>
+ * @author Lorenzo Masetti <lorenzo.masetti@gmail.com> (mysqli port of the original backend)
  */
 
 class b8_storage_mysqli extends b8_storage_base

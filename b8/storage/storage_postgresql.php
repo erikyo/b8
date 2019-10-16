@@ -19,17 +19,12 @@
 */
 
 /**
- * The PostgreSQL backend for communicating with the database.
- * Based on the MySQL backend
- *
- * Copyright (C) 2013 Tom Regner <tom@goochesa.de>
- * Copyright (C) 2013-2014 Tobias Leupold <tobias.leupold@web.de>
+ * A PostgreSQL storage backend
  *
  * @license LGPL 2.1
- * @access public
  * @package b8
- * @author Tom Regner (original PostgreSQL backend)
- * @author Tobias Leupold
+ * @author Tom Regner <tom@goochesa.de> (original PostgreSQL backend)
+ * @author Tobias Leupold <tobias.leupold@gmx.de>
  */
 
 class b8_storage_postgresql extends b8_storage_base

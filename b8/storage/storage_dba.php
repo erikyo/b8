@@ -19,13 +19,11 @@
 */
 
 /**
- * The DBA (Berkeley DB) backend for communicating with the database.
- * Copyright (C) 2006-2014 Tobias Leupold <tobias.leupold@web.de>
+ * A Berkeley DB (DBA) storage backend
  *
  * @license LGPL 2.1
- * @access public
  * @package b8
- * @author Tobias Leupold
+ * @author Tobias Leupold <tobias.leupold@gmx.de>
  */
 
 class b8_storage_dba extends b8_storage_base
