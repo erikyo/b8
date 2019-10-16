@@ -287,5 +287,3 @@ class b8_storage_mysqli extends b8_storage_base
     }
 
 }
-
-?>

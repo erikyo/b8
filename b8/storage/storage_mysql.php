@@ -293,5 +293,3 @@ class b8_storage_mysql extends b8_storage_base
     }
 
 }
-
-?>

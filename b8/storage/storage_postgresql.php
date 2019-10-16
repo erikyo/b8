@@ -293,5 +293,3 @@ class b8_storage_postgresql extends b8_storage_base
     }
 
 }
-
-?>

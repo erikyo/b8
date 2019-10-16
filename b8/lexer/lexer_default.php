@@ -291,5 +291,3 @@ class b8_lexer_default
     }
 
 }
-
-?>

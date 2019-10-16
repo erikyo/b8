@@ -207,5 +207,3 @@ class b8_storage_dba extends b8_storage_base
     }
 
 }
-
-?>

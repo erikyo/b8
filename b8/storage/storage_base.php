@@ -267,5 +267,3 @@ abstract class b8_storage_base
     }
 
 }
-
-?>

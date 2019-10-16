@@ -175,5 +175,3 @@ class b8_degenerator_default
     }
 
 }
-
-?>
