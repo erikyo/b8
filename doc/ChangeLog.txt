@@ -1,3 +1,8 @@
+* Removal: Removed the original MySQL backend using the long-deprecated mysql functions (as opposed
+  to the newer mysqli ones).
+
+* Change: Switched to a more meaningful ChangeLog format.
+
 2019-02-08 Tobias Leupold <tobias.leupold@web.de>
 
     * Release: Version 0.6.2
