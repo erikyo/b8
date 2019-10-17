@@ -37,9 +37,11 @@ abstract class b8_storage_base
      * Passes the degenerator to the instance and calls the backend setup
      *
      * @access public
+     * @param array The respective backen's configuration
+     * @param object The degenerator to use
      * @return void
      */
-    public function __construct($config, $degenerator)
+    public function __construct(array $config, object $degenerator)
     {
         $this->degenerator = $degenerator;
         $this->setup_backend($config);
@@ -86,12 +88,12 @@ abstract class b8_storage_base
      * Get all data about a list of tokens from the database.
      *
      * @access public
-     * @param array $tokens
+     * @param array The tokens list
      * @return mixed Returns False on failure, otherwise returns array of returned data
                in the format [ 'tokens'      => [ token => count ],
                                'degenerates' => [ token => [ degenerate => count ] ] ].
      */
-    public function get($tokens)
+    public function get(array $tokens)
     {
         // First we see what we have in the database
         $token_data = $this->fetch_token_data($tokens);
@@ -149,12 +151,12 @@ abstract class b8_storage_base
      * Stores or deletes a list of tokens from the given category.
      *
      * @access public
-     * @param array $tokens
-     * @param const $category Either b8::HAM or b8::SPAM
-     * @param const $action Either b8::LEARN or b8::UNLEARN
+     * @param array The tokens list
+     * @param string Either b8::HAM or b8::SPAM
+     * @param string Either b8::LEARN or b8::UNLEARN
      * @return void
      */
-    public function process_text($tokens, $category, $action)
+    public function process_text(array $tokens, string $category, string $action)
     {
         // No matter what we do, we first have to check what data we have.
 
