@@ -64,12 +64,8 @@ abstract class b8_storage_base
      */
     public function getInternals()
     {
-        $internals = $this->_getQuery(
-            array(
-                self::INTERNALS_TEXTS,
-                self::INTERNALS_DBVERSION
-            )
-        );
+        $internals = $this->fetch_token_data([ self::INTERNALS_TEXTS,
+                                               self::INTERNALS_DBVERSION ]);
 
         # Just in case this is called by checkDatabase() and
         # it's not yet clear if we actually have a b8 database
@@ -107,7 +103,7 @@ abstract class b8_storage_base
     public function get($tokens)
     {
         # First we see what we have in the database.
-        $token_data = $this->_getQuery($tokens);
+        $token_data = $this->fetch_token_data($tokens);
 
         # Check if we have to degenerate some tokens
         $missing_tokens = array();
@@ -129,7 +125,7 @@ abstract class b8_storage_base
                 $degenerates_list = array_merge($degenerates_list, $token_degenerates);
             }
 
-            $token_data = array_merge($token_data, $this->_getQuery($degenerates_list));
+            $token_data = array_merge($token_data, $this->fetch_token_data($degenerates_list));
         }
 
         # Here, we have all available data in $token_data.
@@ -178,7 +174,7 @@ abstract class b8_storage_base
         $internals = $this->getInternals();
 
         # Then, fetch all data for all tokens we have
-        $token_data = $this->_getQuery(array_keys($tokens));
+        $token_data = $this->fetch_token_data(array_keys($tokens));
 
         # Process all tokens to learn/unlearn
         foreach ($tokens as $token => $count) {

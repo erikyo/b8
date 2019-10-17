@@ -37,7 +37,7 @@ class b8_storage_dba extends b8_storage_base
      * @access public
      * @param array $config: 'resource' => a DBA resource
      */
-    function __construct($config, $degenerator)
+    public function __construct($config, $degenerator)
     {
         if (! isset($config['resource']) || get_resource_type($config['resource']) !== 'dba') {
             throw new Exception("b8_storage_dba: No valid DBA resource passed");
@@ -61,7 +61,7 @@ class b8_storage_dba extends b8_storage_base
      * @return mixed Returns an array of the returned data in the format array(token => data)
                or an empty array if there was no data.
      */
-    protected function _getQuery($tokens)
+    protected function fetch_token_data($tokens)
     {
         $data = array();
 
