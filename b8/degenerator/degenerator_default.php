@@ -44,7 +44,7 @@ class b8_degenerator_default
      */
     public function __construct(array $config)
     {
-        # Validate config data
+        // Validate config data
         foreach ($config as $name => $value) {
             switch($name) {
                 case 'multibyte':
@@ -90,7 +90,7 @@ class b8_degenerator_default
     {
         $list_processed = [];
 
-        # Check each upper/lower version
+        // Check each upper/lower version
         foreach ($list as $alt_word) {
             if ($alt_word != $word) {
                 array_push($list_processed, $alt_word);
@@ -109,44 +109,42 @@ class b8_degenerator_default
      */
     private function degenerate_word(string $word)
     {
-        # Check for any stored words so the process doesn't have to repeat
+        // Check for any stored words so the process doesn't have to repeat
         if (isset($this->degenerates[$word]) === true) {
             return $this->degenerates[$word];
         }
 
-        # Create different versions of upper and lower case
+        // Create different versions of upper and lower case
         if ($this->config['multibyte'] === false) {
-            # The standard upper/lower versions
+            // The standard upper/lower versions
             $lower = strtolower($word);
             $upper = strtoupper($word);
             $first = substr($upper, 0, 1) . substr($lower, 1, strlen($word));
         } elseif ($this->config['multibyte'] === true) {
-            # The multibyte upper/lower versions
+            // The multibyte upper/lower versions
             $lower = mb_strtolower($word, $this->config['encoding']);
             $upper = mb_strtoupper($word, $this->config['encoding']);
-            $first = mb_substr(
-                $upper, 0, 1, $this->config['encoding']) .
-                mb_substr($lower, 1, mb_strlen($word), $this->config['encoding']
-            );
+            $first = mb_substr($upper, 0, 1, $this->config['encoding'])
+                     . mb_substr($lower, 1, mb_strlen($word), $this->config['encoding']);
         }
 
-        # Add the versions
+        // Add the versions
         $upper_lower = [];
         array_push($upper_lower, $lower);
         array_push($upper_lower, $upper);
         array_push($upper_lower, $first);
 
-        # Delete duplicate upper/lower versions
+        // Delete duplicate upper/lower versions
         $degenerate = $this->delete_duplicates($word, $upper_lower);
 
-        # Append the original word
+        // Append the original word
         array_push($degenerate, $word);
 
-        # Degenerate all versions
+        // Degenerate all versions
         foreach ($degenerate as $alt_word) {
-            # Look for stuff like !!! and ???
+            // Look for stuff like !!! and ???
             if (preg_match('/[!?]$/', $alt_word) > 0) {
-                # Add versions with different !s and ?s
+                // Add versions with different !s and ?s
                 if (preg_match('/[!?]{2,}$/', $alt_word) > 0) {
                     $tmp = preg_replace('/([!?])+$/', '$1', $alt_word);
                     array_push($degenerate, $tmp);
@@ -156,7 +154,7 @@ class b8_degenerator_default
                 array_push($degenerate, $tmp);
             }
 
-            # Look for "..." at the end of the word
+            // Look for "..." at the end of the word
             $alt_word_int = $alt_word;
             while (preg_match('/[\.]$/', $alt_word_int) > 0) {
                 $alt_word_int = substr($alt_word_int, 0, strlen($alt_word_int) - 1);
@@ -164,11 +162,11 @@ class b8_degenerator_default
             }
         }
 
-        # Some degenerates are the same as the original word. These don't have
-        # to be fetched, so we create a new array with only new tokens
+        // Some degenerates are the same as the original word. These don't have to be fetched, so we
+        // create a new array with only new tokens
         $degenerate = $this->delete_duplicates($word, $degenerate);
 
-        # Store the list of degenerates for the token to prevent unnecessary re-processing
+        // Store the list of degenerates for the token to prevent unnecessary re-processing
         $this->degenerates[$word] = $degenerate;
 
         return $degenerate;
