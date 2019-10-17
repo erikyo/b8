@@ -29,8 +29,18 @@
 
 class b8
 {
-
     const DBVERSION = 3;
+
+    const SPAM    = 'spam';
+    const HAM     = 'ham';
+    const LEARN   = 'learn';
+    const UNLEARN = 'unlearn';
+
+    const CLASSIFIER_TEXT_MISSING = 'CLASSIFIER_TEXT_MISSING';
+
+    const TRAINER_TEXT_MISSING     = 'TRAINER_TEXT_MISSING';
+    const TRAINER_CATEGORY_MISSING = 'TRAINER_CATEGORY_MISSING';
+    const TRAINER_CATEGORY_FAIL    = 'TRAINER_CATEGORY_FAIL';
 
     private $config = [ 'lexer'        => 'default',
                         'degenerator'  => 'default',
@@ -45,31 +55,20 @@ class b8
     private $degenerator = null;
     private $token_data  = null;
 
-    const SPAM    = 'spam';
-    const HAM     = 'ham';
-    const LEARN   = 'learn';
-    const UNLEARN = 'unlearn';
-
-    const CLASSIFIER_TEXT_MISSING = 'CLASSIFIER_TEXT_MISSING';
-
-    const TRAINER_TEXT_MISSING     = 'TRAINER_TEXT_MISSING';
-    const TRAINER_CATEGORY_MISSING = 'TRAINER_CATEGORY_MISSING';
-    const TRAINER_CATEGORY_FAIL    = 'TRAINER_CATEGORY_FAIL';
-
     /**
      * Constructs b8
      *
      * @access public
-     * @param array $config b8's configuration: [ 'lexer'        => string,
-                                                  'degenerator'  => string,
-                                                  'storage'      => string,
-                                                  'use_relevant' => int,
-                                                  'min_dev'      => double,
-                                                  'rob_s'        => double,
-                                                  'rob_x'        => double ]
-     * @param array $config_storage The storage backend's config (depending on the backend used)
-     * @param array $config_lexer The lexer's config (depending on the lexer used)
-     * @param array $config_degenerator The degenerator's config (depending on the degenerator used)
+     * @param array b8's configuration: [ 'lexer'        => string,
+                                          'degenerator'  => string,
+                                          'storage'      => string,
+                                          'use_relevant' => int,
+                                          'min_dev'      => float,
+                                          'rob_s'        => float,
+                                          'rob_x'        => float ]
+     * @param array The storage backend's config (depending on the backend used)
+     * @param array The lexer's config (depending on the lexer used)
+     * @param array The degenerator's config (depending on the degenerator used)
      * @return void
      */
     function __construct(array $config             = [],
@@ -153,7 +152,7 @@ class b8
             // Include it
             $included = require_once($class_file);
 
-            if ($included === false or class_exists($complete_class_name, false) === false) {
+            if ($included === false || class_exists($complete_class_name, false) === false) {
                 return false;
             }
         }
@@ -249,7 +248,7 @@ class b8
 
         // If no token was good for calculation, we really don't know how to rate this text, so
         // we can return 0.5 without further calculations.
-        if ($haminess == 1 and $spaminess == 1) {
+        if ($haminess == 1 && $spaminess == 1) {
             return 0.5;
         }
 
@@ -277,9 +276,9 @@ class b8
      *
      * @access private
      * @param string $word
-     * @param int $texts_ham
-     * @param int $texts_spam
-     * @return void
+     * @param int ham count
+     * @param int spam count
+     * @return float The word's rating
      */
     private function get_probability(string $word, int $texts_ham, int $texts_spam)
     {
@@ -322,12 +321,13 @@ class b8
      * Do the actual spaminess calculation of a single token
      *
      * @access private
-     * @param array $data
-     * @param string $texts_ham
-     * @param string $texts_spam
-     * @return void
+     * @param array The token's data [ 'count_ham'  => int,
+                                       'count_spam' => int ]
+     * @param int All saved ham texts
+     * @param int All saved spam texts
+     * @return float The rating
      */
-    private function calculate_probability($data, $texts_ham, $texts_spam)
+    private function calculate_probability(array $data, int $texts_ham, int $texts_spam)
     {
         // Calculate the basic probability as proposed by Mr. Graham
 
@@ -358,10 +358,10 @@ class b8
      * Check the validity of the category of a request
      *
      * @access private
-     * @param string $category
+     * @param string The category
      * @return void
      */
-    private function _checkCategory($category)
+    private function check_category(string $category)
     {
         return $category === self::HAM || $category === self::SPAM;
     }
@@ -370,11 +370,11 @@ class b8
      * Learn a reference text
      *
      * @access public
-     * @param string $text
-     * @param const $category Either b8::SPAM or b8::HAM
+     * @param string The text to learn
+     * @param string Either b8::SPAM or b8::HAM
      * @return mixed void or an error code
      */
-    public function learn($text = null, $category = null)
+    public function learn(string $text = null, string $category = null)
     {
         // Let's first see if the user called the function correctly
         if ($text === null) {
@@ -391,11 +391,11 @@ class b8
      * Unlearn a reference text
      *
      * @access public
-     * @param string $text
-     * @param const $category Either b8::SPAM or b8::HAM
+     * @param string The text to unlearn
+     * @param string Either b8::SPAM or b8::HAM
      * @return mixed void or an error code
      */
-    public function unlearn($text = null, $category = null)
+    public function unlearn(string $text = null, string $category = null)
     {
         // Let's first see if the user called the function correctly
         if ($text === null) {
@@ -412,15 +412,15 @@ class b8
      * Does the actual interaction with the storage backend for learning or unlearning texts
      *
      * @access private
-     * @param string $text
-     * @param const $category Either b8::SPAM or b8::HAM
-     * @param const $action Either b8::LEARN or b8::UNLEARN
+     * @param string The text to process
+     * @param string Either b8::SPAM or b8::HAM
+     * @param string Either b8::LEARN or b8::UNLEARN
      * @return mixed void or an error code
      */
-    private function process_text($text, $category, $action)
+    private function process_text(string $text, string $category, string $action)
     {
         // Look if the request is okay
-        if ($this->_checkCategory($category) === false) {
+        if ($this->check_category($category) === false) {
             return self::TRAINER_CATEGORY_FAIL;
         }
 
