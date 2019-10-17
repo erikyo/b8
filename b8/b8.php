@@ -171,7 +171,7 @@ class b8
 
         # Get the internal database variables, containing the number of ham and
         # spam texts so the spam probability can be calculated in relation to them
-        $internals = $this->storage->getInternals();
+        $internals = $this->storage->get_internals();
 
         # Calculate the spamminess of all tokens
 
@@ -381,7 +381,7 @@ class b8
             return self::TRAINER_CATEGORY_MISSING;
         }
 
-        return $this->_processText($text, $category, self::LEARN);
+        return $this->_process_text($text, $category, self::LEARN);
     }
 
     /**
@@ -402,7 +402,7 @@ class b8
             return self::TRAINER_CATEGORY_MISSING;
         }
 
-        return $this->_processText($text, $category, self::UNLEARN);
+        return $this->_process_text($text, $category, self::UNLEARN);
     }
 
     /**
@@ -414,7 +414,7 @@ class b8
      * @param const $action Either b8::LEARN or b8::UNLEARN
      * @return mixed void or an error code
      */
-    private function _processText($text, $category, $action)
+    private function _process_text($text, $category, $action)
     {
         # Look if the request is okay
         if ($this->_checkCategory($category) === false) {
@@ -431,7 +431,7 @@ class b8
         }
 
         # Pass the tokens and what to do with it to the storage backend
-        return $this->storage->processText($tokens, $category, $action);
+        return $this->storage->process_text($tokens, $category, $action);
     }
 
 }

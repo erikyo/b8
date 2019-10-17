@@ -32,25 +32,17 @@ class b8_storage_dba extends b8_storage_base
     private $db = null;
 
     /**
-     * Constructs the backend.
+     * Sets up the backend
      *
      * @access public
      * @param array $config: 'resource' => a DBA resource
      */
-    public function __construct($config, $degenerator)
+    protected function setup_backend($config)
     {
         if (! isset($config['resource']) || get_resource_type($config['resource']) !== 'dba') {
             throw new Exception("b8_storage_dba: No valid DBA resource passed");
         }
-
-        # Get the degenerator instance
-        $this->degenerator = $degenerator;
-
-        # Get the DBA resource
         $this->db = $config['resource'];
-
-        # Let's see if this is a b8 database and the version is okay
-        $this->checkDatabase();
     }
 
     /**
@@ -66,15 +58,14 @@ class b8_storage_dba extends b8_storage_base
         $data = array();
 
         foreach ($tokens as $token) {
-            # Try to the raw data in the format "count_ham count_spam lastseen"
+            // Try to the raw data in the format "count_ham count_spam lastseen"
             $count = dba_fetch($token, $this->db);
 
             if ($count !== false) {
                 # Split the data by space characters
                 $split_data = explode(' ', $count);
 
-                # As the internal variables just have one single value,
-                # we have to check for this
+                // As the internal variables just have one single value, we have to check for this
                 $count_ham  = null;
                 $count_spam = null;
                 if (isset($split_data[0])) {
@@ -84,11 +75,9 @@ class b8_storage_dba extends b8_storage_base
                     $count_spam = (int) $split_data[1];
                 }
 
-                # Append the parsed data
-                $data[$token] = array(
-                    'count_ham'  => $count_ham,
-                    'count_spam' => $count_spam
-                );
+                // Append the parsed data
+                $data[$token] = [ 'count_ham'  => $count_ham,
+                                  'count_spam' => $count_spam ];
             }
         }
 
@@ -102,11 +91,12 @@ class b8_storage_dba extends b8_storage_base
      * @param array ('count_ham' => int, 'count_spam' => int)
      * @return string The translated array
      */
-    private function _translateCount($count) {
-        # Assemble the count data string
-        $count_data = "{$count['count_ham']} {$count['count_spam']}";
-        # Remove whitespace from data of the internal variables
-        return(rtrim($count_data));
+    private function assemble_count_value($count)
+    {
+        // Assemble the count data string
+        $count_value = "{$count['count_ham']} {$count['count_spam']}";
+        // Remove whitespace from data of the internal variables
+        return(rtrim($count_value));
     }
 
     /**
@@ -117,8 +107,9 @@ class b8_storage_dba extends b8_storage_base
      * @param string $count
      * @return bool true on success or false on failure
      */
-    protected function _put($token, $count) {
-        return dba_insert($token, $this->_translateCount($count), $this->db);
+    protected function add_token($token, $count)
+    {
+        return dba_insert($token, $this->assemble_count_value($count), $this->db);
     }
 
     /**
@@ -129,9 +120,9 @@ class b8_storage_dba extends b8_storage_base
      * @param string $count
      * @return bool true on success or false on failure
      */
-    protected function _update($token, $count)
+    protected function update_token($token, $count)
     {
-        return dba_replace($token, $this->_translateCount($count), $this->db);
+        return dba_replace($token, $this->assemble_count_value($count), $this->db);
     }
 
     /**
@@ -141,18 +132,29 @@ class b8_storage_dba extends b8_storage_base
      * @param string $token
      * @return bool true on success or false on failure
      */
-    protected function _del($token)
+    protected function delete_token($token)
     {
         return dba_delete($token, $this->db);
     }
 
     /**
-     * Does nothing. We just need this function because the (My)SQL backend(s) need it.
+     * Does nothing. DBA doesn't need this.
      *
      * @access protected
      * @return void
      */
-    protected function _commit()
+    protected function start_transaction()
+    {
+        return;
+    }
+
+    /**
+     * Does nothing. DBA doesn't need this.
+     *
+     * @access protected
+     * @return void
+     */
+    protected function finish_transaction()
     {
         return;
     }
