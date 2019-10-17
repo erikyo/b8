@@ -41,7 +41,7 @@ class b8_storage_dba extends b8_storage_base
 
     protected function fetch_token_data(array $tokens)
     {
-        $data = array();
+        $data = [];
 
         foreach ($tokens as $token) {
             // Try to the raw data in the format "count_ham count_spam"
@@ -51,15 +51,9 @@ class b8_storage_dba extends b8_storage_base
                 // Split the data by space characters
                 $split_data = explode(' ', $count);
 
-                // As the internal variables just have one single value, we have to check for this
-                $count_ham  = null;
-                $count_spam = null;
-                if (isset($split_data[0])) {
-                    $count_ham = (int) $split_data[0];
-                }
-                if (isset($split_data[1])) {
-                    $count_spam = (int) $split_data[1];
-                }
+                // As an internal variable may have just one single value, we have to check for this
+                $count_ham  = isset($split_data[0]) ? (int) $split_data[0] : null;
+                $count_spam = isset($split_data[1]) ? (int) $split_data[1] : null;
 
                 // Append the parsed data
                 $data[$token] = [ 'count_ham'  => $count_ham,
