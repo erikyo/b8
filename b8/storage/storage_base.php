@@ -34,6 +34,69 @@ abstract class b8_storage_base
     protected $degenerator = null;
 
     /**
+     * Sets up the backend
+     *
+     * @access public
+     * @param array The configuration for the respective backend
+     */
+    abstract protected function setup_backend(array $config);
+
+    /**
+     * Does the actual interaction with the database when fetching data
+     *
+     * @access protected
+     * @param array $tokens List of token names to fetch
+     * @return mixed Returns an array of the returned data in the format array(token => data)
+               or an empty array if there was no data.
+     */
+    abstract protected function fetch_token_data(array $tokens);
+
+    /**
+     * Stores a new token to the database
+     *
+     * @access protected
+     * @param string $token The token's name
+     * @param array $count The ham and spam counters [ 'count_ham' => int, 'count_spam' => int ]
+     * @return bool true on success or false on failure
+     */
+    abstract protected function add_token(string $token, array $count);
+
+    /**
+     * Updates an existing token
+     *
+     * @access protected
+     * @param string $token The token's name
+     * @param array $count The ham and spam counters [ 'count_ham' => int, 'count_spam' => int ]
+     * @return bool true on success or false on failure
+     */
+    abstract protected function update_token(string $token, array $count);
+
+    /**
+     * Removes a token from the database
+     *
+     * @access protected
+     * @param string $token The token's name
+     * @return bool true on success or false on failure
+     */
+    abstract protected function delete_token(string $token);
+
+    /**
+     * Starts a transaction (if the underlying database supports/needs this)
+     *
+     * @access protected
+     * @return void
+     */
+    abstract protected function start_transaction();
+
+    /**
+     * Finishes a transaction (if the underlying database supports/needs this)
+     *
+     * @access protected
+     * @return void
+     */
+    abstract protected function finish_transaction();
+
+    /**
      * Passes the degenerator to the instance and calls the backend setup
      *
      * @access public
