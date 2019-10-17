@@ -35,9 +35,9 @@ class b8_storage_dba extends b8_storage_base
      * Sets up the backend
      *
      * @access public
-     * @param array $config: 'resource' => a DBA resource
+     * @param array $config: [ 'resource' => (a DBA resource) ]
      */
-    protected function setup_backend($config)
+    protected function setup_backend(array $config)
     {
         if (! isset($config['resource']) || get_resource_type($config['resource']) !== 'dba') {
             throw new Exception("b8_storage_dba: No valid DBA resource passed");
@@ -46,14 +46,14 @@ class b8_storage_dba extends b8_storage_base
     }
 
     /**
-     * Does the actual interaction with the database when fetching data.
+     * Does the actual interaction with the database when fetching data
      *
      * @access protected
-     * @param array $tokens
+     * @param array $tokens List of token names to fetch
      * @return mixed Returns an array of the returned data in the format array(token => data)
                or an empty array if there was no data.
      */
-    protected function fetch_token_data($tokens)
+    protected function fetch_token_data(array $tokens)
     {
         $data = array();
 
@@ -88,10 +88,10 @@ class b8_storage_dba extends b8_storage_base
      * Translates a count array to a count data string
      *
      * @access private
-     * @param array ('count_ham' => int, 'count_spam' => int)
+     * @param array $count The ham and spam counters [ 'count_ham' => int, 'count_spam' => int ]
      * @return string The translated array
      */
-    private function assemble_count_value($count)
+    private function assemble_count_value(array $count)
     {
         // Assemble the count data string
         $count_value = "{$count['count_ham']} {$count['count_spam']}";
@@ -100,45 +100,45 @@ class b8_storage_dba extends b8_storage_base
     }
 
     /**
-     * Store a token to the database.
+     * Stores a new token to the database
      *
      * @access protected
-     * @param string $token
-     * @param string $count
+     * @param string $token The token's name
+     * @param array $count The ham and spam counters [ 'count_ham' => int, 'count_spam' => int ]
      * @return bool true on success or false on failure
      */
-    protected function add_token($token, $count)
+    protected function add_token(string $token, array $count)
     {
         return dba_insert($token, $this->assemble_count_value($count), $this->db);
     }
 
     /**
-     * Update an existing token.
+     * Updates an existing token
      *
      * @access protected
-     * @param string $token
-     * @param string $count
+     * @param string $token The token's name
+     * @param array $count The ham and spam counters [ 'count_ham' => int, 'count_spam' => int ]
      * @return bool true on success or false on failure
      */
-    protected function update_token($token, $count)
+    protected function update_token(string $token, array $count)
     {
         return dba_replace($token, $this->assemble_count_value($count), $this->db);
     }
 
     /**
-     * Remove a token from the database.
+     * Removes a token from the database
      *
      * @access protected
-     * @param string $token
+     * @param string $token The token's name
      * @return bool true on success or false on failure
      */
-    protected function delete_token($token)
+    protected function delete_token(string $token)
     {
         return dba_delete($token, $this->db);
     }
 
     /**
-     * Does nothing. DBA doesn't need this.
+     * Does nothing (DBA doesn't need this)
      *
      * @access protected
      * @return void
@@ -149,7 +149,7 @@ class b8_storage_dba extends b8_storage_base
     }
 
     /**
-     * Does nothing. DBA doesn't need this.
+     * Does nothing (DBA doesn't need this)
      *
      * @access protected
      * @return void
