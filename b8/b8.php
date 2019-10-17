@@ -176,7 +176,7 @@ class b8
         # Calculate the spamminess of all tokens
 
         # Get all tokens we want to rate
-        $tokens = $this->lexer->getTokens($text);
+        $tokens = $this->lexer->get_tokens($text);
 
         # Check if the lexer failed
         # (if so, $tokens will be a lexer error code, if not, $tokens will be an array)
@@ -422,7 +422,7 @@ class b8
         }
 
         # Get all tokens from $text
-        $tokens = $this->lexer->getTokens($text);
+        $tokens = $this->lexer->get_tokens($text);
 
         # Check if the lexer failed
         # (if so, $tokens will be a lexer error code, if not, $tokens will be an array)
