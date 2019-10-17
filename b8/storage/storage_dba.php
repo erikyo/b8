@@ -29,76 +29,28 @@
 class b8_storage_dba extends b8_storage_base
 {
 
-    public $config = array(
-        'database' => 'wordlist.db',
-        'handler'  => 'db4'
-    );
-
-    private $_db = null;
+    private $db = null;
 
     /**
      * Constructs the backend.
      *
      * @access public
-     * @param string $config
+     * @param array $config: 'resource' => a DBA resource
      */
-    function __construct($config, &$degenerator)
+    function __construct($config, $degenerator)
     {
-        # Pass the degenerator instance to this class
+        if (! isset($config['resource']) || get_resource_type($config['resource']) !== 'dba') {
+            throw new Exception("b8_storage_dba: No valid DBA resource passed");
+        }
+
+        # Get the degenerator instance
         $this->degenerator = $degenerator;
 
-        # Validate the config items
-        foreach ($config as $name => $value) {
-            switch ($name) {
-                case 'database':
-                case 'handler':
-                    $this->config[$name] = (string) $value;
-                    break;
-                default:
-                    throw new Exception("b8_storage_dba: Unknown configuration key: \"$name\"");
-            }
-        }
-
-        # Connect to the database
-        $dbfile = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . $this->config['database'];
-        if (is_file($dbfile) !== true) {
-            throw new Exception(
-                "b8_storage_dba: Database file \"{$this->config['database']}\" not found."
-            );
-        }
-        if (is_readable($dbfile) !== true) {
-            throw new Exception(
-                "b8_storage_dba: Database file \"{$this->config['database']}\" is not readable."
-            );
-        }
-        if (is_writeable($dbfile) !== true) {
-            throw new Exception(
-                "b8_storage_dba: Database file \"{$this->config['database']}\" is not writeable."
-            );
-        }
-        $this->_db = dba_open($dbfile, 'w', $this->config['handler']);
-
-        if ($this->_db === false) {
-            $this->connected = false;
-            $this->_db = null;
-            throw new Exception(
-                "b8_storage_dba: Could not connect to database file \"{$this->config['database']}\"."
-            );
-        }
+        # Get the DBA resource
+        $this->db = $config['resource'];
 
         # Let's see if this is a b8 database and the version is okay
         $this->checkDatabase();
-    }
-
-    /**
-     * Closes the database connection.
-     *
-     * @access public
-     * @return void
-     */
-    function __destruct()
-    {
-        dba_close($this->_db);
     }
 
     /**
@@ -115,7 +67,7 @@ class b8_storage_dba extends b8_storage_base
 
         foreach ($tokens as $token) {
             # Try to the raw data in the format "count_ham count_spam lastseen"
-            $count = dba_fetch($token, $this->_db);
+            $count = dba_fetch($token, $this->db);
 
             if ($count !== false) {
                 # Split the data by space characters
@@ -166,7 +118,7 @@ class b8_storage_dba extends b8_storage_base
      * @return bool true on success or false on failure
      */
     protected function _put($token, $count) {
-        return dba_insert($token, $this->_translateCount($count), $this->_db);
+        return dba_insert($token, $this->_translateCount($count), $this->db);
     }
 
     /**
@@ -179,7 +131,7 @@ class b8_storage_dba extends b8_storage_base
      */
     protected function _update($token, $count)
     {
-        return dba_replace($token, $this->_translateCount($count), $this->_db);
+        return dba_replace($token, $this->_translateCount($count), $this->db);
     }
 
     /**
@@ -191,7 +143,7 @@ class b8_storage_dba extends b8_storage_base
      */
     protected function _del($token)
     {
-        return dba_delete($token, $this->_db);
+        return dba_delete($token, $this->db);
     }
 
     /**
