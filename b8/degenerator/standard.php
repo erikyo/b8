@@ -56,8 +56,8 @@ class standard
                     $this->config[$name] = (string) $value;
                     break;
                 default:
-                    throw new Exception("b8_degenerator_default: Unknown configuration key: "
-                                        . "\"$name\"");
+                    throw new \Exception(standard::class . ": Unknown configuration key: "
+                                         . "\"$name\"");
             }
         }
     }

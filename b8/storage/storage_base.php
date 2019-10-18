@@ -123,8 +123,8 @@ abstract class storage_base
         if (! isset($internals[self::KEY_DB_VERSION])
             || $internals[self::KEY_DB_VERSION] !== \b8\b8::DBVERSION) {
 
-            throw new Exception('b8_storage_base: The connected database is not a b8 v'
-                                . \b8\b8::DBVERSION . ' database.');
+            throw new \Exception(storage_base::class . ': The connected database is not a b8 v'
+                                 . \b8\b8::DBVERSION . ' database.');
         }
     }
 

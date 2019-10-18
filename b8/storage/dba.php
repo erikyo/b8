@@ -35,8 +35,11 @@ class dba extends storage_base
 
     protected function setup_backend(array $config)
     {
-        if (! isset($config['resource']) || get_resource_type($config['resource']) !== 'dba') {
-            throw new Exception("b8_storage_dba: No valid DBA resource passed");
+        if (! isset($config['resource'])
+            || gettype($config['resource']) !== 'resource'
+            || get_resource_type($config['resource']) !== 'dba') {
+
+            throw new \Exception(dba::class . ": No valid DBA resource passed");
         }
         $this->db = $config['resource'];
     }

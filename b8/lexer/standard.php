@@ -85,7 +85,8 @@ class standard
                     $this->config[$name] = (bool) $value;
                     break;
                 default:
-                    throw new Exception("b8_lexer_default: Unknown configuration key: \"$name\"");
+                    throw new \Exception(standard::class . ": Unknown configuration key: "
+                                         . "\"$name\"");
             }
         }
     }

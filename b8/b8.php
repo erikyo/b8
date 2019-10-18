@@ -97,7 +97,7 @@ class b8
                     $this->config[$name] = (string) $value;
                     break;
                 default:
-                    throw new \Exception("b8: Unknown configuration key: \"$name\"");
+                    throw new \Exception(b8::class . ": Unknown configuration key: \"$name\"");
             }
         }
 
