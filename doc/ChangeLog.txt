@@ -1,5 +1,27 @@
+* New: Added argument types to all function calls.
+
+* New: Added abstract functions to the base storage class, so that implementing a custom one will be
+  easier.
+
+* Change: Added an spl_autoload_register() autoloader.
+
+* Change: Due to namespaces restrictions, the default lexer and degenerator are not called "default"
+  anymore but "standard".
+
+* New: Introduced namespaces
+
+* Removal: Removed the old db update scripts. It has been so long that probably, nobody still uses
+  an old b8 installation anymore.
+
+* Removal: Removed the PostgreSQL backend (due to lack of possibility of testing/maintaining).
+
 * Removal: Removed the original MySQL backend using the long-deprecated mysql functions (as opposed
   to the newer mysqli ones).
+
+* General: Overall code rework. The library needed it ;-) This includes:
+  - Renamed functions to consistent names.
+  - Added a "start transaction" function to the base storage backend.
+  - Moved the database connection setup out of the backend. The user should care about this.
 
 * Change: Switched to a more meaningful ChangeLog format.
 
