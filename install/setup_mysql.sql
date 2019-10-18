@@ -1,5 +1,4 @@
-
---   Copyright (C) 2010-2012 Tobias Leupold <tobias.leupold@web.de>
+--   Copyright (C) 2010-2019 Tobias Leupold <tobias.leupold@gmx.de>
 --
 --   This file is part of the b8 package
 --
@@ -21,7 +20,7 @@ CREATE TABLE `b8_wordlist` (
   `count_ham` int unsigned default NULL,
   `count_spam` int unsigned default NULL,
   PRIMARY KEY (`token`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 INSERT INTO `b8_wordlist` (`token`, `count_ham`) VALUES ('b8*dbversion', '3');
 INSERT INTO `b8_wordlist` (`token`, `count_ham`, `count_spam`) VALUES ('b8*texts', '0', '0');
