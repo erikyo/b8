@@ -237,7 +237,7 @@ class b8
     private function get_probability(string $word, int $texts_ham, int $texts_spam)
     {
         // Let's see what we have!
-        if (isset($this->token_data['tokens'][$word]) === true) {
+        if (isset($this->token_data['tokens'][$word])) {
             // The token is in the database, so we can use it's data as-is and calculate the
             // spaminess of this token directly
             return $this->calculate_probability($this->token_data['tokens'][$word],
@@ -245,7 +245,7 @@ class b8
         }
 
         // The token was not found, so do we at least have similar words?
-        if (isset($this->token_data['degenerates'][$word]) === true) {
+        if (isset($this->token_data['degenerates'][$word])) {
             // We found similar words, so calculate the spaminess for each one and choose the most
             // important one for the further calculation
 
@@ -374,7 +374,7 @@ class b8
     private function process_text(string $text, string $category, string $action)
     {
         // Look if the request is okay
-        if ($this->check_category($category) === false) {
+        if (! $this->check_category($category)) {
             return self::TRAINER_CATEGORY_FAIL;
         }
 
