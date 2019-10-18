@@ -157,8 +157,7 @@ class b8
 
             // Although we only call this function only here ... let's do the calculation stuff in a
             // function to make this a bit less confusing ;-)
-            $rating[$word] = $this->get_probability($word, $internals['texts_ham'],
-                                                           $internals['texts_spam']);
+            $rating[$word] = $this->get_probability($word, $internals);
             $importance[$word] = abs(0.5 - $rating[$word]);
         }
 
@@ -229,19 +228,17 @@ class b8
      * Calculate the spaminess of a single token also considering "degenerated" versions
      *
      * @access private
-     * @param string $word
-     * @param int ham count
-     * @param int spam count
+     * @param string The word to rate
+     * @param array The "internals" array
      * @return float The word's rating
      */
-    private function get_probability(string $word, int $texts_ham, int $texts_spam)
+    private function get_probability(string $word, array $internals)
     {
         // Let's see what we have!
         if (isset($this->token_data['tokens'][$word])) {
             // The token is in the database, so we can use it's data as-is and calculate the
             // spaminess of this token directly
-            return $this->calculate_probability($this->token_data['tokens'][$word],
-                                                $texts_ham, $texts_spam);
+            return $this->calculate_probability($this->token_data['tokens'][$word], $internals);
         }
 
         // The token was not found, so do we at least have similar words?
@@ -254,7 +251,7 @@ class b8
 
             foreach ($this->token_data['degenerates'][$word] as $degenerate => $count) {
                 // Calculate the rating of the current degenerated token
-                $rating_tmp = $this->calculate_probability($count, $texts_ham, $texts_spam);
+                $rating_tmp = $this->calculate_probability($count, $internals);
 
                 // Is it more important than the rating of another degenerated version?
                 if(abs(0.5 - $rating_tmp) > abs(0.5 - $rating)) {
@@ -277,11 +274,10 @@ class b8
      * @access private
      * @param array The token's data [ 'count_ham'  => int,
                                        'count_spam' => int ]
-     * @param int All saved ham texts
-     * @param int All saved spam texts
+     * @param array The "internals" array
      * @return float The rating
      */
-    private function calculate_probability(array $data, int $texts_ham, int $texts_spam)
+    private function calculate_probability(array $data, array $internals)
     {
         // Calculate the basic probability as proposed by Mr. Graham
 
@@ -292,12 +288,12 @@ class b8
         $rel_ham = $data['count_ham'];
         $rel_spam = $data['count_spam'];
 
-        if ($texts_ham > 0) {
-            $rel_ham = $data['count_ham'] / $texts_ham;
+        if ($internals['texts_ham'] > 0) {
+            $rel_ham = $data['count_ham'] / $internals['texts_ham'];
         }
 
-        if ($texts_spam > 0) {
-            $rel_spam = $data['count_spam'] / $texts_spam;
+        if ($internals['texts_spam'] > 0) {
+            $rel_spam = $data['count_spam'] / $internals['texts_spam'];
         }
 
         $rating = $rel_spam / ($rel_ham + $rel_spam);
