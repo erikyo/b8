@@ -4,10 +4,18 @@ b8: readme
 
 :Author: Tobias Leupold
 :Homepage: http://nasauber.de/
-:Contact: tobias.leupold@web.de
+:Contact: tobias.leupold@gmx.de
 :Date: @LASTCHANGE@
 
 .. contents:: Table of Contents
+
+.. |br| raw:: html
+
+   <br />
+
+.. section-numbering::
+
+.. |date| date::
 
 Description of b8
 =================
@@ -22,8 +30,8 @@ b8 is a statistical spam filter. I'm not a mathematician, but as far as I can gr
 
 An example of what we're talking about here:
 
-At the moment of this writing (november 2012), b8 has, since december 2006, classified 26869 guestbook entries and weblog comments on my homepage. 145 were ham. 76 spam texts (0.28 %) have been falsely rated as ham (false negatives) and I had to remove them manually. Only one single ham message has been falsely classified as spam (false positive) back in june 2010, but – in defense of b8 – this was the very first English ham text I got. Previously, each and every of the 15024 English texts posted has been spam. Texts with Chinese, Japanese or Cyrillic content (all spam either) did not appear until 2011. |br|
-This results in a sensitivity of 99.72 % (the probability that a spam text will actually be rated as spam) and a specifity of 99.31 % (the probability that a ham text will actually be rated as ham) for my homepage. Before the one false positive, of course, the specifity has been 100 % ;-)
+At the moment of this writing (November 2012), b8 has, since December 2006, classified 26,869 guestbook entries and weblog comments on my homepage. 145 were ham. 76 spam texts (0.28 %) have been falsely rated as ham (false negatives) and I had to remove them manually. Only one single ham message has been falsely classified as spam (false positive) back in June 2010, but – in defense of b8 – this was the very first English ham text I got. Previously, each and every of the 15,024 English texts posted have been spam. Texts with Chinese, Japanese or Cyrillic content (all spam either) did not appear until 2011. |br|
+This results in a sensitivity of 99.7 % (the probability that a spam text will actually be rated as spam) and a specifity of 99.3 % (the probability that a ham text will actually be rated as ham) for my homepage. Before the one false positive, of course, the specifity has been 100 % ;-)
 
 How does it work?
 -----------------
@@ -36,13 +44,11 @@ Then, b8 takes the most relevant values (which have a rating far from 0.5, which
 What do I need for it?
 ----------------------
 
-Not much! You just need PHP 5 and a database to store the wordlist.
+Not much! You just need PHP (at least 5, 4 is not supported anymore) and a database to store the wordlist.
 
-Currently, there are three backends to choose from for use with one of the following databases:
+The probably most efficient way to store the wordlist is using a `Berkeley DB <http://oracle.com/technetwork/products/berkeleydb/downloads/index.html>`_. This also has been the original approach, and b8 comes with an appropriate storage backend. Of course, other databases can be used as well, as an example, there's also a backend using a mysqli object-style `MySQL <http://mysql.com/>`_ connection.
 
-* `Berkeley DB <http://oracle.com/technetwork/products/berkeleydb/downloads/index.html>`_
-* `MySQL <http://mysql.com/>`_
-* `PostgreSQL <http://postgresql.org/>`_
+It should be quite trivial to create a storage backend for whatever database you want to use. Simply write a class extending ``\b8\storage\storage_base`` which implements the abstract functions listed there.
 
 What's different?
 -----------------
@@ -109,10 +115,36 @@ you will have to change your code to something like this:
 
 When an error occurs while instantiating b8, the object will simply not be created.
 
+Update from b8 0.6.*
+--------------------
+
+The code has been modernized a lot since the last release. Most notably, namespaces have been added, and the database connection has been moved out of the storage backends. So, you have to instantiate b8 e. g. like this now:
+
+::
+
+    $b8 = new b8\b8(...);
+
+To use the constants, please also add the namespace, e. g. ``b8\b8::HAM``.
+
+Due to the namespace introduction, the default degenerator and lexer can't be called ``default`` anymore. The name is now ``standard`` (e. g. ``b8\lexer\standard``).
+
+The DBA backend now simply wants to have a working DBA resource as the only parameter. So if you use this, you would do e. g.:
+
+::
+
+    $db = dba_open('wordlist.db', 'w', 'db4');
+    $config_dba = [ 'resource' => $db ];
+
+and pass this to b8.
+
+The (example) MySQL backend now wants a mysqli object and a table name as config keys. Simply look at the backends themselves to see the changes. Also, some function names have be changed to more meaningful ones. So if you implemented your own backend, you will have to update it. But this should be quite straightforward.
+
+Please notice the newly added ``start_transaction()`` function. I hardly could believe I didn't add support for transactions back then ;-)
+
 Installation
 ============
 
-Installing b8 on your server is quite easy. You just have to provide the needed files. To do this, you could just upload the whole ``b8`` subdirectory to the base directory of your homepage. It contains the filter itself and all needed backend classes. The other directories (``doc``, ``example``, ``install`` and ``update``) are not used by b8.
+Installing b8 on your server is quite easy. You just have to provide the needed files. To do this, you could just upload the whole ``b8`` subdirectory to the base directory of your homepage. It contains the filter itself and all needed backend classes. The other directories (``doc``, ``example`` and ``install``) are not used by b8.
 
 That's it ;-)
 
@@ -122,40 +154,31 @@ Configuration
 The configuration is passed as arrays when instantiating a new b8 object. Four arrays can be passed to b8. One containing b8's base configuration, one for the storage backend, one for the lexer and one for the degenerator. |br|
 You can have a look at ``example/index.php`` to see how this can be done. `Using b8 in your scripts`_ also shows example code showing how b8 can be included in a PHP script.
 
-Not all values have to be set. When some values are missing, the default ones will be used. If you do use the default settings, you don't have to pass them to b8. But of course, if you want to set something in e. g. the fourth config array, but not in the third, you will have to pass an empty ``array()`` as third parameter anyway.
+Not all values have to be set. When some values are missing, the default ones will be used. If you do use the default settings, you don't have to pass them to b8. But of course, if you want to set something in e. g. the fourth config array, but not in the third, you will have to pass an empty ``array()`` or ``[]`` as third parameter anyway.
 
 b8's base configuration
 -----------------------
 
-All these values can be set in the "config_b8" array (the first parameter) passed to b8. The name of the array doesn't matter (of course), it just has to be the first argument.
+All these values can be set in the "config_b8" array (the first parameter) passed to b8.
 
 These are some basic settings telling b8 which backend classes to use:
 
     **storage**
-        This defines which storage backend will be used to save b8's wordlist. Currently, three databases are supported: `Berkeley DB <http://oracle.com/technetwork/products/berkeleydb/downloads/index.html>`_ (``dba``), `MySQL <http://mysql.com/>`_ (``mysql`` and ``mysqli``) and `PostgreSQL <http://postgresql.org/>`_ (``postgresql``). An experimental backend for `SQLite <http://sqlite.org/>`_ resides in SVN trunk but has not reached release quality yet. The default is ``dba`` (string).
+        This defines which storage backend will be used to save b8's wordlist. It's the name of the class in the ``b8\storage`` namespace. b8 comes with two example backends, the default setting is ``dba`` (string). It should be quite easy to add a custom backend. Simply create a class fitting your needs that extends ``b8\storage\storage_base`` and implements it's abstract functions.
 
-        *dba (Berkeley DB)*
-            This has been the original backend for the filter. All content is saved in a single file, you don't need special user rights or a database server. Probably a good choice, as this is very performant and fits exactly to b8's needs. |br|
+        *dba*
+            This one uses a `Berkeley DB <http://oracle.com/technetwork/products/berkeleydb/downloads/index.html>`_, the original storing approach of the filter. All content is saved in a single file, you don't need special user rights or a database server. Most probably a good choice, as this is very performant and fits exactly to b8's needs. |br|
             If you don't know whether your server's PHP installation supports Berkeley DB, simply run the script ``install/setup_berkeleydb.php``. If it shows a Berkeley DB handler, you can use this backend.
 
-        *mysqli (MySQL)*
-            The MySQL relational database system is used very widely on the web and can also be used for storing b8's wordlist. This backend needs of course a running and accessable MySQL server and database. The backend uses the mysqli\_* PHP functions to interact with the database.
-
-        *mysql (MySQL)*
-            This is the original MySQL backend using the legacy mysql\_* PHP functions. PHP encourages users to use the newer mysqli\_* functions. The functions used by this backend have been removed in PHP 7.0.0, so eventually, this backend will also be removed from b8.
-
-        *postgresql (PostgreSQL)*
-            A PostgreSQL schema with one table can also be used for storing b8's wordlist. This backend needs of course a running and accessable PostgreSQL server and database. |br|
-            Communication with the DB server is done via PDO, so you need PHP >= 5.1 compiled with ``--with-pdo-pgsql`` to use this backend.
-
-        See `Configuration of the storage backend`_ for the settings of the chosen backend.
+        *mysql*
+            An example implementation using a `MySQL <http://mysql.com/>`_ table to store the wordlist.
 
     **lexer**
-        The lexer class to be used. Defaults to ``default`` (string). |br|
+        The lexer class to be used. Defaults to ``standard`` (string). |br|
         At the moment, only one lexer exists, so you probably don't want to change this unless you have written your own lexer.
 
     **degenerator**
-        The degenerator class to be used. See `How does it work?`_ and [#betterbayesian]_ if you're interested in what "degeneration" is. Defaults to ``default`` (string). |br|
+        The degenerator class to be used. See `How does it work?`_ and [#betterbayesian]_ if you're interested in what "degeneration" is. Defaults to ``standard`` (string). |br|
         At the moment, only one degenerator exists, so you probably don't want to change this unless you have written your own degenerator.
 
 The following settings influence the mathematical internals of b8. If you want to experiment, feel free to play around with them; but be warned: wrong settings of these values will result in poor performance or could even "short-circuit" the filter. Leave these values as they are unless you know what you are doing.
@@ -181,65 +204,21 @@ The "Statistical discussion about b8" [#b8statistic]_ shows why the default valu
 Configuration of the storage backend
 ------------------------------------
 
-All the following values can be set in the "config_storage" array (the second parameter) passed to b8. The name of the array doesn't matter (of course), it just has to be the second argument.
+The used storage backend itself defines what it wants to have passed in it's configuration array. The two example backends have this configuration:
 
-Settings for the Berkeley DB (DBA) backend
-``````````````````````````````````````````
-**database**
-    The filename of the database file, relative to the location of ``b8.php``. Defaults to ``wordlist.db`` (string).
+The Berkeley DB (DBA) backend
+`````````````````````````````
+**resource**
+    The DBA resource to use (to be set up via e. g. ``$db = dba_open('wordlist.db', 'w', 'db4');``).
 
-**handler**
-    The DBA handler to use (cf. `the PHP documentation <http://php.net/manual/en/dba.requirements.php>`_ and `Setting up a new Berkeley DB`_). Defaults to ``db4`` (string).
+The (example) MySQL backend
+```````````````````````````
 
-Settings for the MySQL backend
-``````````````````````````````
+**resource**
+    The mysqli object to use (to be created via e. g. ``$mysql = new mysqli('localhost', 'user', 'pass', 'database');``).
 
-This applies both for the legacy ``mysql`` backend and for the newer ``mysqli`` backend.
-
-**database**
-    The database containing b8's wordlist table. Defaults to ``b8_wordlist`` (string).
-
-**table_name**
-    The table containing b8's wordlist. Defaults to ``b8_wordlist`` (string).
-
-**host**
-    The host of the MySQL server. Defaults to ``localhost`` (string).
-
-**user**
-    The user name used to open the database connection. Defaults to ``false`` (boolean).
-
-**pass**
-    The password required to open the database connection. Defaults to ``false`` (boolean).
-
-**connection**
-    An existing MySQL link-resource (for the ``mysql`` backend) or a mysqli object (for the ``mysqli`` backend) that can be used by b8. If a connection is passed to b8, it will be used to communicate with the database instead of creating a new connection. Defaults to ``null`` (null).
-
-Settings for the PostgreSQL backend
-```````````````````````````````````
-
-**database**
-    The database containing b8's wordlist table. Defaults to ``b8_wordlist`` (string).
-
-**table_name**
-    The table containing b8's wordlist. Defaults to ``b8_wordlist`` (string).
-
-**host**
-    The host of the PostgreSQL server. Defaults to ``localhost`` (string).
-
-**port**
-    The port of the PostgreSQL server. Defaults to ``5432`` (integer).
-
-**schema**
-    The schema in the database to use. Defaults to ``b8`` (string).
-
-**user**
-    The user name used to open the database connection. Defaults to ``false`` (boolean).
-
-**pass**
-    The password required to open the database connection. Defaults to ``false`` (boolean).
-
-**connection**
-    An existing PDO instance that can be used by b8. If a connection is passed to b8, it will be used to communicate with the database instead of creating a new connection. Defaults to ``null`` (null).
+**table**
+    The table containing b8's wordlist.
 
 Configuration of the lexer
 --------------------------
@@ -310,8 +289,6 @@ If you prefer to setup a new b8 Berkeley DB manually, just create an empty datab
     "b8*dbversion" => "3"
     "b8*texts"     => "0 0"
 
-Be sure to set the right DBA handler in the storage backend configuration if it's not ``db4``.
-
 Setting up a new MySQL table
 ````````````````````````````
 
@@ -337,7 +314,7 @@ Just have a look at the example script ``example/index.php`` to see how you can 
 
     # Create a new b8 instance
     try {
-        $b8 = new b8($config_b8, $config_storage, $config_lexer, $config_degenerator);
+        $b8 = new b8\b8($config_b8, $config_storage, $config_lexer, $config_degenerator);
     }
     catch(Exception $e) {
         do_something();
@@ -345,14 +322,14 @@ Just have a look at the example script ``example/index.php`` to see how you can 
 
 b8 provides three functions in an object oriented way (called e. g. via ``$b8->classify($text)``):
 
-**classify($text)**
+**classify(string $text)**
     This function takes the text ``$text`` (string), calculates it's probability for being spam and returns it in the form of a value between 0 and 1 (float). |br|
     A value close to 0 says the text is more likely ham and a value close to 1 says the text is more likely spam. What to do with this value is *your* business ;-) See also `Tips on operation`_ below.
 
-**learn($text, $category)**
-    This saves the text ``$text`` (string) in the category ``$category`` (b8 constant, either ``b8::HAM`` or ``b8::SPAM``).
+**learn(string $text, string $category)**
+    This saves the text ``$text`` (string) in the category ``$category`` (b8 constant, either ``b8\b8::HAM`` or ``b8\b8::SPAM``).
 
-**unlearn($text, $category)**
+**unlearn(string $text, string $category)**
     You don't need this function in normal operation. It just exists to delete a text from a category in which is has been stored accidentally before. It deletes the text ``$text`` (string) from the category ``$category`` (b8 constant, either ``b8::HAM`` or ``b8::SPAM``). |br|
     **Don't delete a spam text from ham after saving it in spam or vice versa, as long you don't have stored it accidentally in the wrong category before!** This will *not* improve performance, quite the opposite! The filter will always try to remove texts from the ham or spam data, even if they have never been stored there. The counters for tokens which are found will be decreased or the word will be deleted and the non-existing words will simply be ignored. But always, the text counter for the respective category will be decreased by 1 and will eventually reach 0. Consequently, the ham-spam texts proportion will become distorted, deteriorating the performance of b8's algorithms.
 
@@ -447,11 +424,3 @@ The database layout is quite simple. It's essentially just a key-value pair for 
 Each "normal" token is stored with it's literal name as the key and it's data as the value. The backends store the token's data in a different way. The DBA backend simply stores a string containing both values separated by a space character. The SQL backends store the counters in different columns.
 
 A database query is always done by searching for a token's name, never for a count value.
-
-.. |br| raw:: html
-
-   <br />
-
-.. section-numbering::
-
-.. |date| date::
