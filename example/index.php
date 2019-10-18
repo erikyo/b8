@@ -22,6 +22,7 @@
  * This is an example script demonstrating how b8 can be used. *
  ***************************************************************/
 
+/******************************
 // Use this code block if you want to use Berkeley DB (you should ;-).
 
 // First create an empty database (e. g. using the install/setup_berkeleydb.php script)
@@ -30,7 +31,21 @@ $db = dba_open('wordlist.db', 'w', 'db4');
 
 // Tell b8 to use the above Berkeley DB
 $config_b8      = [ 'storage'  => 'dba' ];
-$config_storage = [ 'resource' => $db   ];
+$config_storage = [ 'resource' => $db ];
+*******************************/
+
+/*******************************
+// Use this code block if you want to use a MySQL table
+
+// Be sure to provide appropriate access data and have the respective table set up
+// (e. g. run the SQL to be found in install/setup_mysql.sql)
+$mysql = new mysqli('localhost', 'user', 'pass', 'database');
+
+// Tell b8 to use the above MySQL resource
+$config_b8      = [ 'storage'  => 'mysql' ];
+$config_storage = [ 'resource' => $mysql,
+                    'table'    => 'b8_wordlist' ];
+*******************************/
 
 // Tell b8 to use the new-style HTML extractor
 $config_lexer = [ 'old_get_html' => false,
@@ -94,6 +109,12 @@ echo <<<END
 
 END;
 
+if (! isset($config_b8)) {
+    echo "<p style=\"color:red;\"><b>Please adjust the settings in this file first!</b></p>\n\n";
+    echo "\n\n</div>\n\n</body>\n\n</html>";
+    exit();
+}
+
 $postedText = '';
 
 if (isset($_POST['action']) and $_POST['text'] ==  '') {
@@ -131,8 +152,10 @@ if (isset($_POST['action']) and $_POST['text'] ==  '') {
 
             echo "<p>Saved the text as Spam</p>\n\n";
             echo "<div><table>\n";
-            echo '<tr><td>Classification before learning:</td><td>' . formatRating($ratingBefore) . "</td></tr>\n";
-            echo '<tr><td>Classification after learning:</td><td>'  . formatRating($ratingAfter)  . "</td></tr>\n";
+            echo '<tr><td>Classification before learning:</td><td>' . formatRating($ratingBefore)
+                 . "</td></tr>\n";
+            echo '<tr><td>Classification after learning:</td><td>'  . formatRating($ratingAfter)
+                 . "</td></tr>\n";
             echo "</table></div>\n\n";
 
             break;
@@ -145,8 +168,10 @@ if (isset($_POST['action']) and $_POST['text'] ==  '') {
             echo "<p>Saved the text as Ham</p>\n\n";
 
             echo "<div><table>\n";
-            echo '<tr><td>Classification before learning:</td><td>' . formatRating($ratingBefore) . "</td></tr>\n";
-            echo '<tr><td>Classification after learning:</td><td>'  . formatRating($ratingAfter)  . "</td></tr>\n";
+            echo '<tr><td>Classification before learning:</td><td>' . formatRating($ratingBefore)
+                 . "</td></tr>\n";
+            echo '<tr><td>Classification after learning:</td><td>'  . formatRating($ratingAfter)
+                 . "</td></tr>\n";
             echo "</table></div>\n\n";
 
             break;
