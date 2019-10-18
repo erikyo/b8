@@ -33,6 +33,11 @@ abstract class storage_base
     const INTERNALS_TEXTS     = 'b8*texts';
     const INTERNALS_DBVERSION = 'b8*dbversion';
 
+    const KEY_COUNT_HAM  = 'count_ham';
+    const KEY_COUNT_SPAM = 'count_spam';
+    const KEY_TEXTS_HAM  = 'texts_ham';
+    const KEY_TEXTS_SPAM = 'texts_spam';
+
     protected $degenerator = null;
 
     /**
@@ -58,7 +63,8 @@ abstract class storage_base
      *
      * @access protected
      * @param string $token The token's name
-     * @param array $count The ham and spam counters [ 'count_ham' => int, 'count_spam' => int ]
+     * @param array $count The ham and spam counters [ self::KEY_COUNT_HAM => int,
+                                                       self::KEY_COUNT_SPAM => int ]
      * @return bool true on success or false on failure
      */
     abstract protected function add_token(string $token, array $count);
@@ -68,7 +74,8 @@ abstract class storage_base
      *
      * @access protected
      * @param string $token The token's name
-     * @param array $count The ham and spam counters [ 'count_ham' => int, 'count_spam' => int ]
+     * @param array $count The ham and spam counters [ self::KEY_COUNT_HAM => int,
+                                                       self::KEY_COUNT_SPAM => int ]
      * @return bool true on success or false on failure
      */
     abstract protected function update_token(string $token, array $count);
@@ -134,18 +141,18 @@ abstract class storage_base
         $texts_ham = null;
         $texts_spam = null;
         $dbversion = null;
-        if(isset($internals[self::INTERNALS_TEXTS]['count_ham'])) {
-            $texts_ham = (int) $internals[self::INTERNALS_TEXTS]['count_ham'];
+        if(isset($internals[self::INTERNALS_TEXTS][self::KEY_COUNT_HAM])) {
+            $texts_ham = (int) $internals[self::INTERNALS_TEXTS][self::KEY_COUNT_HAM];
         }
-        if(isset($internals[self::INTERNALS_TEXTS]['count_spam'])) {
-            $texts_spam = (int) $internals[self::INTERNALS_TEXTS]['count_spam'];
+        if(isset($internals[self::INTERNALS_TEXTS][self::KEY_COUNT_SPAM])) {
+            $texts_spam = (int) $internals[self::INTERNALS_TEXTS][self::KEY_COUNT_SPAM];
         }
-        if(isset($internals[self::INTERNALS_DBVERSION]['count_ham'])) {
-            $dbversion = (int) $internals[self::INTERNALS_DBVERSION]['count_ham'];
+        if(isset($internals[self::INTERNALS_DBVERSION][self::KEY_COUNT_HAM])) {
+            $dbversion = (int) $internals[self::INTERNALS_DBVERSION][self::KEY_COUNT_HAM];
         }
 
-        return [ 'texts_ham'  => $texts_ham,
-                 'texts_spam' => $texts_spam,
+        return [ self::KEY_TEXTS_HAM  => $texts_ham,
+                 self::KEY_TEXTS_SPAM => $texts_spam,
                  'dbversion'  => $dbversion ];
     }
 
@@ -238,8 +245,8 @@ abstract class storage_base
                 // We already have this token, so update it's data
 
                 // Get the existing data
-                $count_ham  = $token_data[$token]['count_ham'];
-                $count_spam = $token_data[$token]['count_spam'];
+                $count_ham  = $token_data[$token][self::KEY_COUNT_HAM];
+                $count_spam = $token_data[$token][self::KEY_COUNT_SPAM];
 
                 // Increase or decrease the right counter
                 if ($action === \b8\b8::LEARN) {
@@ -266,8 +273,8 @@ abstract class storage_base
 
                 // Now let's see if we have to update or delete the token
                 if ($count_ham != 0 or $count_spam != 0) {
-                    $this->update_token($token, [ 'count_ham' => $count_ham,
-                                                  'count_spam' => $count_spam ]);
+                    $this->update_token($token, [ self::KEY_COUNT_HAM => $count_ham,
+                                                  self::KEY_COUNT_SPAM => $count_spam ]);
                 } else {
                     $this->delete_token($token);
                 }
@@ -276,11 +283,11 @@ abstract class storage_base
                 // have it anyway, so just do something if we learn a text
                 if ($action === \b8\b8::LEARN) {
                     if ($category === \b8\b8::HAM) {
-                        $this->add_token($token, [ 'count_ham' => $count,
-                                                   'count_spam' => 0 ]);
+                        $this->add_token($token, [ self::KEY_COUNT_HAM => $count,
+                                                   self::KEY_COUNT_SPAM => 0 ]);
                     } elseif ($category === \b8\b8::SPAM) {
-                        $this->add_token($token, [ 'count_ham' => 0,
-                                                   'count_spam' => $count ]);
+                        $this->add_token($token, [ self::KEY_COUNT_HAM => 0,
+                                                   self::KEY_COUNT_SPAM => $count ]);
                     }
                 }
             }
@@ -289,24 +296,25 @@ abstract class storage_base
         // Now, all token have been processed, so let's update the right text
         if ($action === \b8\b8::LEARN) {
             if ($category === \b8\b8::HAM) {
-                $internals['texts_ham']++;
+                $internals[self::KEY_TEXTS_HAM]++;
             } elseif ($category === \b8\b8::SPAM) {
-                $internals['texts_spam']++;
+                $internals[self::KEY_TEXTS_SPAM]++;
             }
         } elseif ($action == \b8\b8::UNLEARN) {
             if ($category === \b8\b8::HAM) {
-                if ($internals['texts_ham'] > 0) {
-                    $internals['texts_ham']--;
+                if ($internals[self::KEY_TEXTS_HAM] > 0) {
+                    $internals[self::KEY_TEXTS_HAM]--;
                 }
             } elseif ($category === \b8\b8::SPAM) {
-                if ($internals['texts_spam'] > 0) {
-                    $internals['texts_spam']--;
+                if ($internals[self::KEY_TEXTS_SPAM] > 0) {
+                    $internals[self::KEY_TEXTS_SPAM]--;
                 }
             }
         }
 
-        $this->update_token(self::INTERNALS_TEXTS, [ 'count_ham'  => $internals['texts_ham'],
-                                                     'count_spam' => $internals['texts_spam'] ]);
+        $this->update_token(self::INTERNALS_TEXTS,
+                            [ self::KEY_COUNT_HAM  => $internals[self::KEY_TEXTS_HAM],
+                              self::KEY_COUNT_SPAM => $internals[self::KEY_TEXTS_SPAM] ]);
 
         $this->finish_transaction();
     }

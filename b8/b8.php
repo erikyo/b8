@@ -272,8 +272,8 @@ class b8
      * Do the actual spaminess calculation of a single token
      *
      * @access private
-     * @param array The token's data [ 'count_ham'  => int,
-                                       'count_spam' => int ]
+     * @param array The token's data [ $this->storage::KEY_COUNT_HAM  => int,
+                                       $this->storage::KEY_COUNT_SPAM => int ]
      * @param array The "internals" array
      * @return float The rating
      */
@@ -285,21 +285,23 @@ class b8
         // where the token appeared to calculate a relative spaminess because we count tokens
         // appearing multiple times not just once but as often as they appear in the learned texts.
 
-        $rel_ham = $data['count_ham'];
-        $rel_spam = $data['count_spam'];
+        $rel_ham = $data[$this->storage::KEY_COUNT_HAM];
+        $rel_spam = $data[$this->storage::KEY_COUNT_SPAM];
 
-        if ($internals['texts_ham'] > 0) {
-            $rel_ham = $data['count_ham'] / $internals['texts_ham'];
+        if ($internals[$this->storage::KEY_TEXTS_HAM] > 0) {
+            $rel_ham = $data[$this->storage::KEY_COUNT_HAM]
+                       / $internals[$this->storage::KEY_TEXTS_HAM];
         }
 
-        if ($internals['texts_spam'] > 0) {
-            $rel_spam = $data['count_spam'] / $internals['texts_spam'];
+        if ($internals[$this->storage::KEY_TEXTS_SPAM] > 0) {
+            $rel_spam = $data[$this->storage::KEY_COUNT_SPAM]
+                        / $internals[$this->storage::KEY_TEXTS_SPAM];
         }
 
         $rating = $rel_spam / ($rel_ham + $rel_spam);
 
         // Calculate the better probability proposed by Mr. Robinson
-        $all = $data['count_ham'] + $data['count_spam'];
+        $all = $data[$this->storage::KEY_COUNT_HAM] + $data[$this->storage::KEY_COUNT_SPAM];
         return (($this->config['rob_s'] * $this->config['rob_x']) + ($all * $rating))
                / ($this->config['rob_s'] + $all);
     }
