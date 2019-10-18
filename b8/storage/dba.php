@@ -18,6 +18,8 @@
    Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
+namespace b8\storage;
+
 /**
  * A Berkeley DB (DBA) storage backend
  *
@@ -26,7 +28,7 @@
  * @author Tobias Leupold <tobias.leupold@gmx.de>
  */
 
-class b8_storage_dba extends b8_storage_base
+class dba extends storage_base
 {
 
     private $db = null;

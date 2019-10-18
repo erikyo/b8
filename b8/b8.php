@@ -27,6 +27,8 @@
  * @author Oliver Lillie <ollie@buggedcom.co.uk> (original PHP 5 port)
  */
 
+namespace b8;
+
 class b8
 {
     const DBVERSION = 3;
@@ -42,8 +44,8 @@ class b8
     const TRAINER_CATEGORY_MISSING = 'TRAINER_CATEGORY_MISSING';
     const TRAINER_CATEGORY_FAIL    = 'TRAINER_CATEGORY_FAIL';
 
-    private $config = [ 'lexer'        => 'default',
-                        'degenerator'  => 'default',
+    private $config = [ 'lexer'        => 'standard',
+                        'degenerator'  => 'standard',
                         'storage'      => 'dba',
                         'use_relevant' => 15,
                         'min_dev'      => 0.2,
@@ -93,14 +95,14 @@ class b8
                     $this->config[$name] = (string) $value;
                     break;
                 default:
-                    throw new Exception("b8: Unknown configuration key: \"$name\"");
+                    throw new \Exception("b8: Unknown configuration key: \"$name\"");
             }
         }
 
         // Setup the degenerator class
         $class = $this->load_class('degenerator', $this->config['degenerator']);
         if ($class === false) {
-            throw new Exception("b8: Could not load class definition file for degenerator "
+            throw new \Exception("b8: Could not load class definition file for degenerator "
                                 . "\"{$this->config['degenerator']}\"");
         }
         $this->degenerator = new $class($config_degenerator);
@@ -108,20 +110,20 @@ class b8
         // Setup the lexer class
         $class = $this->load_class('lexer', $this->config['lexer']);
         if ($class === false) {
-            throw new Exception("b8: Could not load class definition file for lexer "
+            throw new \Exception("b8: Could not load class definition file for lexer "
                                 . "\"{$this->config['lexer']}\"");
         }
         $this->lexer = new $class($config_lexer);
 
         // Setup the storage backend
-        $class = $this->load_class('storage', 'base');
+        $class = $this->load_class('storage', 'storage_base');
         if ($class === false) {
-            throw new Exception("b8: Could not load class definition file for the storage base "
-                                . "class");
+            throw new \Exception("b8: Could not load class definition file for the storage base "
+                                 . "class");
         }
         $class = $this->load_class('storage', $this->config['storage']);
         if ($class === false) {
-            throw new Exception(
+            throw new \Exception(
                 "b8: Could not load class definition file for storage backend " .
                 "\"{$this->config['storage']}\""
             );
@@ -139,9 +141,9 @@ class b8
      */
     private function load_class(string $class_type, string $class_name)
     {
-        $complete_class_name = "b8_{$class_type}_{$class_name}";
+        $complete_class_name = "\\b8\\$class_type\\$class_name";
         $class_file = dirname(__FILE__) . DIRECTORY_SEPARATOR . $class_type . DIRECTORY_SEPARATOR
-                      . "{$class_type}_{$class_name}.php";
+                      . "$class_name.php";
 
         if (class_exists($complete_class_name, false) === false) {
             // Check if the requested file actually exists

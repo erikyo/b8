@@ -26,7 +26,9 @@
  * @author Tobias Leupold <tobias.leupold@gmx.de>
  */
 
-class b8_degenerator_default
+namespace b8\degenerator;
+
+class standard
 {
 
     public $config = [ 'multibyte' => false,

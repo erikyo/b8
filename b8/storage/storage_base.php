@@ -26,7 +26,9 @@
  * @author Tobias Leupold <tobias.leupold@gmx.de>
  */
 
-abstract class b8_storage_base
+namespace b8\storage;
+
+abstract class storage_base
 {
     const INTERNALS_TEXTS     = 'b8*texts';
     const INTERNALS_DBVERSION = 'b8*dbversion';
@@ -110,9 +112,9 @@ abstract class b8_storage_base
         $this->setup_backend($config);
 
         $internals = $this->get_internals();
-        if (! isset($internals['dbversion']) || $internals['dbversion'] !== b8::DBVERSION) {
+        if (! isset($internals['dbversion']) || $internals['dbversion'] !== \b8\b8::DBVERSION) {
             throw new Exception('b8_storage_base: The connected database is not a b8 v'
-                                . b8::DBVERSION . ' database.');
+                                . \b8\b8::DBVERSION . ' database.');
         }
     }
 
@@ -215,8 +217,8 @@ abstract class b8_storage_base
      *
      * @access public
      * @param array The tokens list
-     * @param string Either b8::HAM or b8::SPAM
-     * @param string Either b8::LEARN or b8::UNLEARN
+     * @param string Either \b8\b8::HAM or \b8\b8::SPAM
+     * @param string Either \b8\b8::LEARN or \b8\b8::UNLEARN
      * @return void
      */
     public function process_text(array $tokens, string $category, string $action)
@@ -240,16 +242,16 @@ abstract class b8_storage_base
                 $count_spam = $token_data[$token]['count_spam'];
 
                 // Increase or decrease the right counter
-                if ($action === b8::LEARN) {
-                    if ($category === b8::HAM) {
+                if ($action === \b8\b8::LEARN) {
+                    if ($category === \b8\b8::HAM) {
                         $count_ham += $count;
-                    } elseif ($category === b8::SPAM) {
+                    } elseif ($category === \b8\b8::SPAM) {
                         $count_spam += $count;
                     }
-                } elseif ($action == b8::UNLEARN) {
-                    if ($category === b8::HAM) {
+                } elseif ($action == \b8\b8::UNLEARN) {
+                    if ($category === \b8\b8::HAM) {
                         $count_ham -= $count;
-                    } elseif ($category === b8::SPAM) {
+                    } elseif ($category === \b8\b8::SPAM) {
                         $count_spam -= $count;
                     }
                 }
@@ -272,11 +274,11 @@ abstract class b8_storage_base
             } else {
                 // We don't have the token. If we unlearn a text, we can't delete it as we don't
                 // have it anyway, so just do something if we learn a text
-                if ($action === b8::LEARN) {
-                    if ($category === b8::HAM) {
+                if ($action === \b8\b8::LEARN) {
+                    if ($category === \b8\b8::HAM) {
                         $this->add_token($token, [ 'count_ham' => $count,
                                                    'count_spam' => 0 ]);
-                    } elseif ($category === b8::SPAM) {
+                    } elseif ($category === \b8\b8::SPAM) {
                         $this->add_token($token, [ 'count_ham' => 0,
                                                    'count_spam' => $count ]);
                     }
@@ -285,18 +287,18 @@ abstract class b8_storage_base
         }
 
         // Now, all token have been processed, so let's update the right text
-        if ($action === b8::LEARN) {
-            if ($category === b8::HAM) {
+        if ($action === \b8\b8::LEARN) {
+            if ($category === \b8\b8::HAM) {
                 $internals['texts_ham']++;
-            } elseif ($category === b8::SPAM) {
+            } elseif ($category === \b8\b8::SPAM) {
                 $internals['texts_spam']++;
             }
-        } elseif ($action == b8::UNLEARN) {
-            if ($category === b8::HAM) {
+        } elseif ($action == \b8\b8::UNLEARN) {
+            if ($category === \b8\b8::HAM) {
                 if ($internals['texts_ham'] > 0) {
                     $internals['texts_ham']--;
                 }
-            } elseif ($category === b8::SPAM) {
+            } elseif ($category === \b8\b8::SPAM) {
                 if ($internals['texts_spam'] > 0) {
                     $internals['texts_spam']--;
                 }

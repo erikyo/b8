@@ -27,7 +27,9 @@
  * @author Oliver Lillie <ollie@buggedcom.co.uk> (original PHP 5 port)
  */
 
-class b8_lexer_default
+namespace b8\lexer;
+
+class standard
 {
 
     const LEXER_TEXT_NOT_STRING = 'LEXER_TEXT_NOT_STRING';
