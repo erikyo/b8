@@ -33,6 +33,7 @@ abstract class storage_base
     const INTERNALS_TEXTS     = 'b8*texts';
     const INTERNALS_DBVERSION = 'b8*dbversion';
 
+    const KEY_DB_VERSION = 'dbversion';
     const KEY_COUNT_HAM  = 'count_ham';
     const KEY_COUNT_SPAM = 'count_spam';
     const KEY_TEXTS_HAM  = 'texts_ham';
@@ -119,7 +120,9 @@ abstract class storage_base
         $this->setup_backend($config);
 
         $internals = $this->get_internals();
-        if (! isset($internals['dbversion']) || $internals['dbversion'] !== \b8\b8::DBVERSION) {
+        if (! isset($internals[self::KEY_DB_VERSION])
+            || $internals[self::KEY_DB_VERSION] !== \b8\b8::DBVERSION) {
+
             throw new Exception('b8_storage_base: The connected database is not a b8 v'
                                 . \b8\b8::DBVERSION . ' database.');
         }
@@ -153,7 +156,7 @@ abstract class storage_base
 
         return [ self::KEY_TEXTS_HAM  => $texts_ham,
                  self::KEY_TEXTS_SPAM => $texts_spam,
-                 'dbversion'  => $dbversion ];
+                 self::KEY_DB_VERSION => $dbversion ];
     }
 
     /**
