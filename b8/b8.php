@@ -29,6 +29,8 @@
 
 namespace b8;
 
+spl_autoload_register();
+
 class b8
 {
     const DBVERSION = 3;
@@ -100,66 +102,16 @@ class b8
         }
 
         // Setup the degenerator class
-        $class = $this->load_class('degenerator', $this->config['degenerator']);
-        if ($class === false) {
-            throw new \Exception("b8: Could not load class definition file for degenerator "
-                                . "\"{$this->config['degenerator']}\"");
-        }
+        $class = '\\b8\\degenerator\\' . $this->config['degenerator'];
         $this->degenerator = new $class($config_degenerator);
 
         // Setup the lexer class
-        $class = $this->load_class('lexer', $this->config['lexer']);
-        if ($class === false) {
-            throw new \Exception("b8: Could not load class definition file for lexer "
-                                . "\"{$this->config['lexer']}\"");
-        }
+        $class = '\\b8\\lexer\\' . $this->config['lexer'];
         $this->lexer = new $class($config_lexer);
 
         // Setup the storage backend
-        $class = $this->load_class('storage', 'storage_base');
-        if ($class === false) {
-            throw new \Exception("b8: Could not load class definition file for the storage base "
-                                 . "class");
-        }
-        $class = $this->load_class('storage', $this->config['storage']);
-        if ($class === false) {
-            throw new \Exception(
-                "b8: Could not load class definition file for storage backend " .
-                "\"{$this->config['storage']}\""
-            );
-        }
+        $class = '\\b8\\storage\\' . $this->config['storage'];
         $this->storage = new $class($config_storage, $this->degenerator);
-    }
-
-    /**
-     * Load a class file if a class has not been defined yet.
-     *
-     * @access private
-     * @param string The class's type
-     * @param string The class's name
-     * @return boolean Returns true if everything is okay, otherwise false.
-     */
-    private function load_class(string $class_type, string $class_name)
-    {
-        $complete_class_name = "\\b8\\$class_type\\$class_name";
-        $class_file = dirname(__FILE__) . DIRECTORY_SEPARATOR . $class_type . DIRECTORY_SEPARATOR
-                      . "$class_name.php";
-
-        if (class_exists($complete_class_name, false) === false) {
-            // Check if the requested file actually exists
-            if (is_file($class_file) !== true or is_readable($class_file) !== true) {
-                return false;
-            }
-
-            // Include it
-            $included = require_once($class_file);
-
-            if ($included === false || class_exists($complete_class_name, false) === false) {
-                return false;
-            }
-        }
-
-        return $complete_class_name;
     }
 
     /**
