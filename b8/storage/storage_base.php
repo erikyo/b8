@@ -208,7 +208,7 @@ abstract class storage_base
             } else {
                 // The token was not found, so we look if we can return data for degenerated tokens
                 foreach ($this->degenerator->degenerates[$token] as $degenerate) {
-                    if (isset($token_data[$degenerate]) === true) {
+                    if (isset($token_data[$degenerate])) {
                         // A degenertaed version of the token way found in the database
                         $return_data_degenerates[$token][$degenerate] = $token_data[$degenerate];
                     }
@@ -303,7 +303,7 @@ abstract class storage_base
             } elseif ($category === \b8\b8::SPAM) {
                 $internals[self::KEY_TEXTS_SPAM]++;
             }
-        } elseif ($action == \b8\b8::UNLEARN) {
+        } elseif ($action === \b8\b8::UNLEARN) {
             if ($category === \b8\b8::HAM) {
                 if ($internals[self::KEY_TEXTS_HAM] > 0) {
                     $internals[self::KEY_TEXTS_HAM]--;
