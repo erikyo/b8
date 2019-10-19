@@ -1,3 +1,6 @@
+* Change: The degenerator's "multibyte" option (that makes the degernator use mb_strtolower,
+  mb_strtoupper and mb_substr instead of strtolower, strtoupper and substr) now defaults to true.
+
 * New: Added argument types to all function calls.
 
 * New: Added abstract functions to the base storage class, so that implementing a custom one will be

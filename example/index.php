@@ -51,9 +51,10 @@ $config_storage = [ 'resource' => $mysql,
 $config_lexer = [ 'old_get_html' => false,
                   'get_html'     => true ];
 
-// Tell the degenerator to use multibyte operations
-// (needs PHP's mbstring module! If you don't have it, set 'multibyte' to false)
-$config_degenerator = [ 'multibyte' => true ];
+// We use the default degenerator configuration
+$config_degenerator = [];
+// If you don't have PHP's mbstring module, set 'multibyte' to false:
+//$config_degenerator = [ 'multibyte' => false ];
 
 /**************************
  * Here starts the script *
