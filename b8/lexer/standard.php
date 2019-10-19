@@ -35,24 +35,26 @@ class standard
     const LEXER_TEXT_NOT_STRING = 'LEXER_TEXT_NOT_STRING';
     const LEXER_TEXT_EMPTY      = 'LEXER_TEXT_EMPTY';
 
-    public $config = [ 'min_size'      => 3,
-                       'max_size'      => 30,
-                       'get_uris'      => true,
-                       'get_html'      => true,
-                       'get_bbcode'    => false,
-                       'allow_numbers' => false ];
+    const LEXER_NO_TOKENS = 'b8*no_tokens';
+
+    private $config = [ 'min_size'      => 3,
+                        'max_size'      => 30,
+                        'get_uris'      => true,
+                        'get_html'      => true,
+                        'get_bbcode'    => false,
+                        'allow_numbers' => false ];
 
     private $tokens         = null;
     private $processed_text = null;
 
     // The regular expressions we use to split the text to tokens
-    public $regexp = [ 'raw_split' => '/[\s,\.\/"\:;\|<>\-_\[\]{}\+=\)\(\*\&\^%]+/',
-                       'ip'        => '/([A-Za-z0-9\_\-\.]+)/',
-                       'uris'      => '/([A-Za-z0-9\_\-]*\.[A-Za-z0-9\_\-\.]+)/',
-                       'html'      => '/(<.+?>)/',
-                       'bbcode'    => '/(\[.+?\])/',
-                       'tagname'   => '/(.+?)\s/',
-                       'numbers'   => '/^[0-9]+$/' ];
+    private $regexp = [ 'raw_split' => '/[\s,\.\/"\:;\|<>\-_\[\]{}\+=\)\(\*\&\^%]+/',
+                        'ip'        => '/([A-Za-z0-9\_\-\.]+)/',
+                        'uris'      => '/([A-Za-z0-9\_\-]*\.[A-Za-z0-9\_\-\.]+)/',
+                        'html'      => '/(<.+?>)/',
+                        'bbcode'    => '/(\[.+?\])/',
+                        'tagname'   => '/(.+?)\s/',
+                        'numbers'   => '/^[0-9]+$/' ];
 
     /**
      * Constructs the lexer.
@@ -134,7 +136,7 @@ class standard
 
         // Be sure not to return an empty array
         if (count($this->tokens) == 0) {
-            $this->tokens['b8*no_tokens'] = 1;
+            $this->tokens[self::LEXER_NO_TOKENS] = 1;
         }
 
         // Return a list of all found tokens
