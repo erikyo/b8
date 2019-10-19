@@ -68,7 +68,7 @@ If this is a new b8 installation, read on at the `Installation`_ section!
 Update from bayes-php version 0.2.1 or earlier
 ----------------------------------------------
 
-Please first follow the database update instructions of the bayes-php-0.3 release if you update from a version prior to bayes-php-0.3, then read the following two paragraphs.
+Please first follow the database update instructions of the bayes-php-0.3 release if you update from a version prior to bayes-php-0.3, then read on.
 
 Update from bayes-php version 0.3 to any pre-0.5 version of b8
 --------------------------------------------------------------
@@ -118,7 +118,10 @@ When an error occurs while instantiating b8, the object will simply not be creat
 Update from b8 0.6.*
 --------------------
 
-The code has been modernized a lot since the last release. Most notably, namespaces have been added, and the database connection has been moved out of the storage backends. So, you have to instantiate b8 e. g. like this now:
+Overall code rework
+```````````````````
+
+The code has been modernized a lot since the last release. Most notably, namespaces have been added. So, you have to instantiate b8 e. g. like this now:
 
 ::
 
@@ -127,6 +130,11 @@ The code has been modernized a lot since the last release. Most notably, namespa
 To use the constants, please also add the namespace, e. g. ``b8\b8::HAM``.
 
 Due to the namespace introduction, the default degenerator and lexer can't be called ``default`` anymore. The name is now ``standard`` (e. g. ``b8\lexer\standard``).
+
+Storage backend approach change
+```````````````````````````````
+
+The storage backends now leave the connection to a database to the user (where it belongs). The Berkeley DB (DBA) storage backend remains the reference one. The other remaining one shows how to store b8's wordlist in a MySQL table, more as an example how to implement a proper storage backend. The base storage class now has all needed functions added as abstract definitions, so that everybody can easily implement their needed backend. Also, some function names have been changed to more meaningful ones.
 
 The DBA backend now simply wants to have a working DBA resource as the only parameter. So if you use this, you would do e. g.:
 
@@ -137,9 +145,24 @@ The DBA backend now simply wants to have a working DBA resource as the only para
 
 and pass this to b8.
 
-The (example) MySQL backend now wants a mysqli object and a table name as config keys. Simply look at the backends themselves to see the changes. Also, some function names have be changed to more meaningful ones. So if you implemented your own backend, you will have to update it. But this should be quite straightforward.
+The (example) MySQL backend takes a mysqli object and a table name as config keys. Simply look at the backends themselves to see the changes.
 
-Please notice the newly added ``start_transaction()`` function. I hardly could believe I didn't add support for transactions back then ;-)
+If you implemented your own backend, you will have to update it. But this should be quite straightforward.
+
+Please notice the newly added ``start_transaction()`` function. Actually, with MySQL's MyISAM engine that was the default back then, transactions didn't even exist (man, this project is actually quite old ;-)!
+
+Additionally, the PostgreSQL backend and the original MySQL backend (using the long-deprecated ``mysql`` functions, not the ``mysqli`` ones) have been removed.
+
+New default configuration
+`````````````````````````
+
+The default configuration of the lexer and the degenerator has also been changed.
+
+The degenerator now uses multibyte operations by default. This needs PHP's ``mbstring`` module. If you don't have it, set ``multibyte`` to ``false`` in the config array.
+
+Speaking of the lexer, the legacy HTML extractor has been removed, alongside with it's ``old_get_html`` config option.
+
+Please update your configuration arrays!
 
 Installation
 ============
