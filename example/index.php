@@ -47,9 +47,8 @@ $config_storage = [ 'resource' => $mysql,
                     'table'    => 'b8_wordlist' ];
 *******************************/
 
-// Tell b8 to use the new-style HTML extractor
-$config_lexer = [ 'old_get_html' => false,
-                  'get_html'     => true ];
+// We use the default lexer settings
+$config_lexer = [];
 
 // We use the default degenerator configuration
 $config_degenerator = [];

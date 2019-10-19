@@ -37,11 +37,10 @@ class standard
 
     public $config = [ 'min_size'      => 3,
                        'max_size'      => 30,
-                       'allow_numbers' => false,
                        'get_uris'      => true,
-                       'old_get_html'  => true,
-                       'get_html'      => false,
-                       'get_bbcode'    => false ];
+                       'get_html'      => true,
+                       'get_bbcode'    => false,
+                       'allow_numbers' => false ];
 
     private $tokens         = null;
     private $processed_text = null;
@@ -61,11 +60,10 @@ class standard
      * @access public
      * @param array $config The configuration: [ 'min_size'      => int,
      *                                           'max_size'      => int,
-     *                                           'allow_numbers' => bool,
      *                                           'get_uris'      => bool,
-     *                                           'old_get_html'  => bool,
      *                                           'get_html'      => bool,
-     *                                           'get_bbcode'    => bool ]
+     *                                           'get_bbcode'    => bool,
+     *                                           'allow_numbers' => bool ]
      * @return void
      */
     function __construct(array $config)
@@ -79,7 +77,6 @@ class standard
                     break;
                 case 'allow_numbers':
                 case 'get_uris':
-                case 'old_get_html':
                 case 'get_html':
                 case 'get_bbcode':
                     $this->config[$name] = (bool) $value;
@@ -120,11 +117,6 @@ class standard
         if ($this->config['get_uris'] === true) {
             // Get URIs
             $this->get_uris($this->processed_text);
-        }
-
-        if ($this->config['old_get_html'] === true) {
-            // Get HTML - the old way without removing the found tags
-            $this->get_html_old($this->processed_text);
         }
 
         if ($this->config['get_html'] === true) {
@@ -253,29 +245,6 @@ class standard
 
             // Try to add the found tokens to the list
             $this->add_token($word, $actual_word);
-        }
-    }
-
-    /**
-     * The function to get HTML code used up to b8 0.5.2.
-     *
-     * @access private
-     * @param string $text
-     * @return void
-     */
-    private function get_html_old(string $text)
-    {
-        // Search for the markup
-        preg_match_all($this->regexp['html'], $text, $raw_tokens);
-        foreach ($raw_tokens[1] as $word) {
-            // If the tag has parameters, just use the tag itself
-            if (strpos($word, ' ') !== false) {
-                preg_match($this->regexp['tagname'], $word, $match);
-                $word = "{$match[1]}...>";
-            }
-
-            // Try to add the found tokens to the list
-            $this->add_token($word);
         }
     }
 
