@@ -31,7 +31,6 @@ namespace b8\lexer;
 
 class standard
 {
-
     const LEXER_TEXT_NOT_STRING = 'LEXER_TEXT_NOT_STRING';
     const LEXER_TEXT_EMPTY      = 'LEXER_TEXT_EMPTY';
 

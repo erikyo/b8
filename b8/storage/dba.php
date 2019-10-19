@@ -61,8 +61,8 @@ class dba extends storage_base
                 $count_spam = isset($split_data[1]) ? (int) $split_data[1] : null;
 
                 // Append the parsed data
-                $data[$token] = [ self::KEY_COUNT_HAM  => $count_ham,
-                                  self::KEY_COUNT_SPAM => $count_spam ];
+                $data[$token] = [ \b8\b8::KEY_COUNT_HAM  => $count_ham,
+                                  \b8\b8::KEY_COUNT_SPAM => $count_spam ];
             }
         }
 
@@ -72,7 +72,7 @@ class dba extends storage_base
     private function assemble_count_value(array $count)
     {
         // Assemble the count data string
-        $count_value = $count[self::KEY_COUNT_HAM] . ' ' . $count[self::KEY_COUNT_SPAM];
+        $count_value = $count[\b8\b8::KEY_COUNT_HAM] . ' ' . $count[\b8\b8::KEY_COUNT_SPAM];
         // Remove whitespace from data of the internal variables
         return(rtrim($count_value));
     }

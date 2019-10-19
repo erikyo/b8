@@ -63,8 +63,8 @@ class mysql extends storage_base
                                       . "('" . implode("','", $escaped) . "')");
 
         while ($row = $result->fetch_row()) {
-            $data[$row[0]] = [ self::KEY_COUNT_HAM  => $row[1],
-                               self::KEY_COUNT_SPAM => $row[2] ];
+            $data[$row[0]] = [ \b8\b8::KEY_COUNT_HAM  => $row[1],
+                               \b8\b8::KEY_COUNT_SPAM => $row[2] ];
         }
 
         $result->free_result();
@@ -76,8 +76,8 @@ class mysql extends storage_base
     {
         $query = $this->mysql->prepare('INSERT INTO ' . $this->table
                                        . '(token, count_ham, count_spam) VALUES(?, ?, ?)');
-        $query->bind_param('sii', $token, $count[self::KEY_COUNT_HAM],
-                                          $count[self::KEY_COUNT_SPAM]);
+        $query->bind_param('sii', $token, $count[\b8\b8::KEY_COUNT_HAM],
+                                          $count[\b8\b8::KEY_COUNT_SPAM]);
         $query->execute();
     }
 
@@ -85,7 +85,7 @@ class mysql extends storage_base
     {
         $query = $this->mysql->prepare('UPDATE ' . $this->table
                                        . ' SET count_ham = ?, count_spam = ? WHERE token = ?');
-        $query->bind_param('iis', $count[self::KEY_COUNT_HAM], $count[self::KEY_COUNT_SPAM],
+        $query->bind_param('iis', $count[\b8\b8::KEY_COUNT_HAM], $count[\b8\b8::KEY_COUNT_SPAM],
                                   $token);
         $query->execute();
     }

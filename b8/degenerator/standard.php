@@ -30,7 +30,6 @@ namespace b8\degenerator;
 
 class standard
 {
-
     public $config = [ 'multibyte' => true,
                        'encoding'  => 'UTF-8' ];
 

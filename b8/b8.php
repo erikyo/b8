@@ -52,6 +52,15 @@ class b8
     const TRAINER_CATEGORY_MISSING = 'TRAINER_CATEGORY_MISSING';
     const TRAINER_CATEGORY_FAIL    = 'TRAINER_CATEGORY_FAIL';
 
+    const INTERNALS_TEXTS     = 'b8*texts';
+    const INTERNALS_DBVERSION = 'b8*dbversion';
+
+    const KEY_DB_VERSION = 'dbversion';
+    const KEY_COUNT_HAM  = 'count_ham';
+    const KEY_COUNT_SPAM = 'count_spam';
+    const KEY_TEXTS_HAM  = 'texts_ham';
+    const KEY_TEXTS_SPAM = 'texts_spam';
+
     private $config = [ 'lexer'        => 'standard',
                         'degenerator'  => 'standard',
                         'storage'      => 'dba',
@@ -131,7 +140,7 @@ class b8
     {
         // Let's first see if the user called the function correctly
         if ($text === null) {
-            return self::CLASSIFIER_TEXT_MISSING;
+            return \b8\b8::CLASSIFIER_TEXT_MISSING;
         }
 
         // Get the internal database variables, containing the number of ham and spam texts so the
@@ -278,8 +287,8 @@ class b8
      * Do the actual spaminess calculation of a single token
      *
      * @access private
-     * @param array The token's data [ $this->storage::KEY_COUNT_HAM  => int,
-                                       $this->storage::KEY_COUNT_SPAM => int ]
+     * @param array The token's data [ \b8\b8::KEY_COUNT_HAM  => int,
+                                       \b8\b8::KEY_COUNT_SPAM => int ]
      * @param array The "internals" array
      * @return float The rating
      */
@@ -291,23 +300,21 @@ class b8
         // where the token appeared to calculate a relative spaminess because we count tokens
         // appearing multiple times not just once but as often as they appear in the learned texts.
 
-        $rel_ham = $data[$this->storage::KEY_COUNT_HAM];
-        $rel_spam = $data[$this->storage::KEY_COUNT_SPAM];
+        $rel_ham = $data[\b8\b8::KEY_COUNT_HAM];
+        $rel_spam = $data[\b8\b8::KEY_COUNT_SPAM];
 
-        if ($internals[$this->storage::KEY_TEXTS_HAM] > 0) {
-            $rel_ham = $data[$this->storage::KEY_COUNT_HAM]
-                       / $internals[$this->storage::KEY_TEXTS_HAM];
+        if ($internals[\b8\b8::KEY_TEXTS_HAM] > 0) {
+            $rel_ham = $data[\b8\b8::KEY_COUNT_HAM] / $internals[\b8\b8::KEY_TEXTS_HAM];
         }
 
-        if ($internals[$this->storage::KEY_TEXTS_SPAM] > 0) {
-            $rel_spam = $data[$this->storage::KEY_COUNT_SPAM]
-                        / $internals[$this->storage::KEY_TEXTS_SPAM];
+        if ($internals[\b8\b8::KEY_TEXTS_SPAM] > 0) {
+            $rel_spam = $data[\b8\b8::KEY_COUNT_SPAM] / $internals[\b8\b8::KEY_TEXTS_SPAM];
         }
 
         $rating = $rel_spam / ($rel_ham + $rel_spam);
 
         // Calculate the better probability proposed by Mr. Robinson
-        $all = $data[$this->storage::KEY_COUNT_HAM] + $data[$this->storage::KEY_COUNT_SPAM];
+        $all = $data[\b8\b8::KEY_COUNT_HAM] + $data[\b8\b8::KEY_COUNT_SPAM];
         return (($this->config['rob_s'] * $this->config['rob_x']) + ($all * $rating))
                / ($this->config['rob_s'] + $all);
     }
@@ -321,7 +328,7 @@ class b8
      */
     private function check_category(string $category)
     {
-        return $category === self::HAM || $category === self::SPAM;
+        return $category === \b8\b8::HAM || $category === \b8\b8::SPAM;
     }
 
     /**
@@ -336,13 +343,13 @@ class b8
     {
         // Let's first see if the user called the function correctly
         if ($text === null) {
-            return self::TRAINER_TEXT_MISSING;
+            return \b8\b8::TRAINER_TEXT_MISSING;
         }
         if ($category === null) {
-            return self::TRAINER_CATEGORY_MISSING;
+            return \b8\b8::TRAINER_CATEGORY_MISSING;
         }
 
-        return $this->process_text($text, $category, self::LEARN);
+        return $this->process_text($text, $category, \b8\b8::LEARN);
     }
 
     /**
@@ -357,13 +364,13 @@ class b8
     {
         // Let's first see if the user called the function correctly
         if ($text === null) {
-            return self::TRAINER_TEXT_MISSING;
+            return \b8\b8::TRAINER_TEXT_MISSING;
         }
         if ($category === null) {
-            return self::TRAINER_CATEGORY_MISSING;
+            return \b8\b8::TRAINER_CATEGORY_MISSING;
         }
 
-        return $this->process_text($text, $category, self::UNLEARN);
+        return $this->process_text($text, $category, \b8\b8::UNLEARN);
     }
 
     /**
@@ -379,7 +386,7 @@ class b8
     {
         // Look if the request is okay
         if (! $this->check_category($category)) {
-            return self::TRAINER_CATEGORY_FAIL;
+            return \b8\b8::TRAINER_CATEGORY_FAIL;
         }
 
         // Get all tokens from $text

@@ -30,15 +30,6 @@ namespace b8\storage;
 
 abstract class storage_base
 {
-    const INTERNALS_TEXTS     = 'b8*texts';
-    const INTERNALS_DBVERSION = 'b8*dbversion';
-
-    const KEY_DB_VERSION = 'dbversion';
-    const KEY_COUNT_HAM  = 'count_ham';
-    const KEY_COUNT_SPAM = 'count_spam';
-    const KEY_TEXTS_HAM  = 'texts_ham';
-    const KEY_TEXTS_SPAM = 'texts_spam';
-
     protected $degenerator = null;
 
     /**
@@ -64,8 +55,8 @@ abstract class storage_base
      *
      * @access protected
      * @param string $token The token's name
-     * @param array $count The ham and spam counters [ self::KEY_COUNT_HAM => int,
-                                                       self::KEY_COUNT_SPAM => int ]
+     * @param array $count The ham and spam counters [ \b8\b8::KEY_COUNT_HAM => int,
+                                                       \b8\b8::KEY_COUNT_SPAM => int ]
      * @return bool true on success or false on failure
      */
     abstract protected function add_token(string $token, array $count);
@@ -75,8 +66,8 @@ abstract class storage_base
      *
      * @access protected
      * @param string $token The token's name
-     * @param array $count The ham and spam counters [ self::KEY_COUNT_HAM => int,
-                                                       self::KEY_COUNT_SPAM => int ]
+     * @param array $count The ham and spam counters [ \b8\b8::KEY_COUNT_HAM => int,
+                                                       \b8\b8::KEY_COUNT_SPAM => int ]
      * @return bool true on success or false on failure
      */
     abstract protected function update_token(string $token, array $count);
@@ -120,8 +111,8 @@ abstract class storage_base
         $this->setup_backend($config);
 
         $internals = $this->get_internals();
-        if (! isset($internals[self::KEY_DB_VERSION])
-            || $internals[self::KEY_DB_VERSION] !== \b8\b8::DBVERSION) {
+        if (! isset($internals[\b8\b8::KEY_DB_VERSION])
+            || $internals[\b8\b8::KEY_DB_VERSION] !== \b8\b8::DBVERSION) {
 
             throw new \Exception(storage_base::class . ': The connected database is not a b8 v'
                                  . \b8\b8::DBVERSION . ' database.');
@@ -136,27 +127,27 @@ abstract class storage_base
      */
     public function get_internals()
     {
-        $internals = $this->fetch_token_data([ self::INTERNALS_TEXTS,
-                                               self::INTERNALS_DBVERSION ]);
+        $internals = $this->fetch_token_data([ \b8\b8::INTERNALS_TEXTS,
+                                               \b8\b8::INTERNALS_DBVERSION ]);
 
         // Just in case this is called by check_database() and it's not yet clear if we actually
         // have a b8 database
         $texts_ham = null;
         $texts_spam = null;
         $dbversion = null;
-        if(isset($internals[self::INTERNALS_TEXTS][self::KEY_COUNT_HAM])) {
-            $texts_ham = (int) $internals[self::INTERNALS_TEXTS][self::KEY_COUNT_HAM];
+        if(isset($internals[\b8\b8::INTERNALS_TEXTS][\b8\b8::KEY_COUNT_HAM])) {
+            $texts_ham = (int) $internals[\b8\b8::INTERNALS_TEXTS][\b8\b8::KEY_COUNT_HAM];
         }
-        if(isset($internals[self::INTERNALS_TEXTS][self::KEY_COUNT_SPAM])) {
-            $texts_spam = (int) $internals[self::INTERNALS_TEXTS][self::KEY_COUNT_SPAM];
+        if(isset($internals[\b8\b8::INTERNALS_TEXTS][\b8\b8::KEY_COUNT_SPAM])) {
+            $texts_spam = (int) $internals[\b8\b8::INTERNALS_TEXTS][\b8\b8::KEY_COUNT_SPAM];
         }
-        if(isset($internals[self::INTERNALS_DBVERSION][self::KEY_COUNT_HAM])) {
-            $dbversion = (int) $internals[self::INTERNALS_DBVERSION][self::KEY_COUNT_HAM];
+        if(isset($internals[\b8\b8::INTERNALS_DBVERSION][\b8\b8::KEY_COUNT_HAM])) {
+            $dbversion = (int) $internals[\b8\b8::INTERNALS_DBVERSION][\b8\b8::KEY_COUNT_HAM];
         }
 
-        return [ self::KEY_TEXTS_HAM  => $texts_ham,
-                 self::KEY_TEXTS_SPAM => $texts_spam,
-                 self::KEY_DB_VERSION => $dbversion ];
+        return [ \b8\b8::KEY_TEXTS_HAM  => $texts_ham,
+                 \b8\b8::KEY_TEXTS_SPAM => $texts_spam,
+                 \b8\b8::KEY_DB_VERSION => $dbversion ];
     }
 
     /**
@@ -248,8 +239,8 @@ abstract class storage_base
                 // We already have this token, so update it's data
 
                 // Get the existing data
-                $count_ham  = $token_data[$token][self::KEY_COUNT_HAM];
-                $count_spam = $token_data[$token][self::KEY_COUNT_SPAM];
+                $count_ham  = $token_data[$token][\b8\b8::KEY_COUNT_HAM];
+                $count_spam = $token_data[$token][\b8\b8::KEY_COUNT_SPAM];
 
                 // Increase or decrease the right counter
                 if ($action === \b8\b8::LEARN) {
@@ -276,8 +267,8 @@ abstract class storage_base
 
                 // Now let's see if we have to update or delete the token
                 if ($count_ham != 0 or $count_spam != 0) {
-                    $this->update_token($token, [ self::KEY_COUNT_HAM => $count_ham,
-                                                  self::KEY_COUNT_SPAM => $count_spam ]);
+                    $this->update_token($token, [ \b8\b8::KEY_COUNT_HAM => $count_ham,
+                                                  \b8\b8::KEY_COUNT_SPAM => $count_spam ]);
                 } else {
                     $this->delete_token($token);
                 }
@@ -286,11 +277,11 @@ abstract class storage_base
                 // have it anyway, so just do something if we learn a text
                 if ($action === \b8\b8::LEARN) {
                     if ($category === \b8\b8::HAM) {
-                        $this->add_token($token, [ self::KEY_COUNT_HAM => $count,
-                                                   self::KEY_COUNT_SPAM => 0 ]);
+                        $this->add_token($token, [ \b8\b8::KEY_COUNT_HAM => $count,
+                                                   \b8\b8::KEY_COUNT_SPAM => 0 ]);
                     } elseif ($category === \b8\b8::SPAM) {
-                        $this->add_token($token, [ self::KEY_COUNT_HAM => 0,
-                                                   self::KEY_COUNT_SPAM => $count ]);
+                        $this->add_token($token, [ \b8\b8::KEY_COUNT_HAM => 0,
+                                                   \b8\b8::KEY_COUNT_SPAM => $count ]);
                     }
                 }
             }
@@ -299,25 +290,25 @@ abstract class storage_base
         // Now, all token have been processed, so let's update the right text
         if ($action === \b8\b8::LEARN) {
             if ($category === \b8\b8::HAM) {
-                $internals[self::KEY_TEXTS_HAM]++;
+                $internals[\b8\b8::KEY_TEXTS_HAM]++;
             } elseif ($category === \b8\b8::SPAM) {
-                $internals[self::KEY_TEXTS_SPAM]++;
+                $internals[\b8\b8::KEY_TEXTS_SPAM]++;
             }
         } elseif ($action === \b8\b8::UNLEARN) {
             if ($category === \b8\b8::HAM) {
-                if ($internals[self::KEY_TEXTS_HAM] > 0) {
-                    $internals[self::KEY_TEXTS_HAM]--;
+                if ($internals[\b8\b8::KEY_TEXTS_HAM] > 0) {
+                    $internals[\b8\b8::KEY_TEXTS_HAM]--;
                 }
             } elseif ($category === \b8\b8::SPAM) {
-                if ($internals[self::KEY_TEXTS_SPAM] > 0) {
-                    $internals[self::KEY_TEXTS_SPAM]--;
+                if ($internals[\b8\b8::KEY_TEXTS_SPAM] > 0) {
+                    $internals[\b8\b8::KEY_TEXTS_SPAM]--;
                 }
             }
         }
 
-        $this->update_token(self::INTERNALS_TEXTS,
-                            [ self::KEY_COUNT_HAM  => $internals[self::KEY_TEXTS_HAM],
-                              self::KEY_COUNT_SPAM => $internals[self::KEY_TEXTS_SPAM] ]);
+        $this->update_token(\b8\b8::INTERNALS_TEXTS,
+                            [ \b8\b8::KEY_COUNT_HAM  => $internals[\b8\b8::KEY_TEXTS_HAM],
+                              \b8\b8::KEY_COUNT_SPAM => $internals[\b8\b8::KEY_TEXTS_SPAM] ]);
 
         $this->finish_transaction();
     }
