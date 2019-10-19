@@ -32,8 +32,8 @@ namespace b8;
 spl_autoload_register(
     function ($class) {
         $parts = explode('\\', $class);
-        include __DIR__ . DIRECTORY_SEPARATOR . $parts[1]
-                        . DIRECTORY_SEPARATOR . $parts[2] . '.php';
+        require_once __DIR__ . DIRECTORY_SEPARATOR . $parts[1]
+                     . DIRECTORY_SEPARATOR . $parts[2] . '.php';
     }
 );
 
