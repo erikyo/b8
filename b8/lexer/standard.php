@@ -169,7 +169,7 @@ class standard
             return false;
         }
 
-        # Token is okay
+        // Token is okay
         return true;
     }
 
