@@ -1,7 +1,7 @@
 * Removal: Removed the legacy HTML extractor from the lexer, along with the "old_get_html"
   configuration option.
 
-* Change: The degenerator's "multibyte" option (that makes the degernator use mb_strtolower,
+* Change: The degenerator's "multibyte" option (that makes the degenerator use mb_strtolower,
   mb_strtoupper and mb_substr instead of strtolower, strtoupper and substr) now defaults to true.
 
 * New: Added argument types to all function calls.
