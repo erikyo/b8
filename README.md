@@ -7,7 +7,3 @@ b8 is a statistical ("Bayesian") spam filter implemented in PHP. It is intended 
 ## Homepage
 
 The project's official homepage with further information is <https://nasauber.de/opensource/b8/>.
-
-## Sources
-
-The official source repository is `git.l3u.de/b8.git` (can be checked out anonymously using `git://`).
