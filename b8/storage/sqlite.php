@@ -26,7 +26,7 @@ use PDO;
  *
  * @license LGPL 2.1
  * @package b8
- * @author Tobias Leupold <tobias.leupold@gmx.de>
+ * @author Malte Paskuda <malte@paskuda.biz>
  */
 
 class sqlite extends storage_base
