@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: none
+#
+# SPDX-License-Identifier: CC0-1.0
+
 # Fill in variables
 version=$(git describe --dirty)
 version=${version##*v}
@@ -16,7 +20,7 @@ cd b8-$version
 sed -i -e "s/@LASTCHANGE@/$readme_date/" doc/Readme.rst
 
 # Compile the readme
-rst2html.py doc/Readme.rst doc/Readme.htm
+rst2html5.py doc/Readme.rst doc/Readme.htm
 
 # Remove the release script
 rm make_release

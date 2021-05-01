@@ -1,21 +1,31 @@
-==========
-b8: readme
-==========
+..
+    SPDX-FileCopyrightText: 2006-2021 Tobias Leupold <tobias.leupold@gmx.de>
 
-:Author: Tobias Leupold
-:Homepage: http://nasauber.de/
-:Contact: tobias.leupold@gmx.de
-:Date: @LASTCHANGE@
-
-.. contents:: Table of Contents
+    SPDX-License-Identifier: CC-BY-SA-4.0
 
 .. |br| raw:: html
 
    <br />
 
+.. |contact_email| raw:: html
+
+    &#116;&#111;&#98;&#105;&#97;&#115;&nbsp;&#46;&nbsp;&#108;&#101;&#117;&#112;&#111;&#108;&#100;&nbsp;&#97;&#116;&nbsp;&#103;&#109;&#120;&nbsp;&#46;&nbsp;&#100;&#101;
+
+.. meta::
+   :viewport: width=device-width, initial-scale=1
+
 .. section-numbering::
 
-.. |date| date::
+==========
+b8: readme
+==========
+
+:Author: Tobias Leupold
+:Homepage: https://nasauber.de/opensource/b8/
+:Contact: |contact_email|
+:Date: @LASTCHANGE@
+
+.. contents:: Table of Contents
 
 Description of b8
 =================
