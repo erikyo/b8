@@ -2,7 +2,7 @@
 
 /* SPDX-FileCopyrightText: 2006-2021 Tobias Leupold <tobias.leupold@gmx.de>
 
-   SPDX-License-Identifier: LGPL-2.1-only
+   SPDX-License-Identifier: LGPL-3.0-or-later
 */
 
 /**

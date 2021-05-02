@@ -3,7 +3,7 @@
 /* SPDX-FileCopyrightText: 2006-2021 Tobias Leupold <tobias.leupold@gmx.de>
    SPDX-FileCopyrightText: 2009 Oliver Lillie <ollie@buggedcom.co.uk>
 
-   SPDX-License-Identifier: LGPL-2.1-only
+   SPDX-License-Identifier: LGPL-3.0-or-later
 */
 
 namespace b8\storage;

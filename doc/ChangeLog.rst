@@ -1,3 +1,5 @@
+* Change: Switched from "LGPL 2.1 only" to "LGPL 3.0 or later", in agreement with all authors
+
 * Bugfix: Fixed problem with spl_autoload_register() when using the Smarty PHP Template Engine
   Thanks to Malte Paskuda and Michael Loesler for pointing this out and providing a patch!
 
