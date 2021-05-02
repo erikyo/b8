@@ -1,8 +1,3 @@
-..
-    SPDX-FileCopyrightText: 2006-2021 Tobias Leupold <tobias.leupold@gmx.de>
-
-    SPDX-License-Identifier: CC-BY-SA-4.0
-
 .. |br| raw:: html
 
    <br />
