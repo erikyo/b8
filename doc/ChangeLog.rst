@@ -1,3 +1,6 @@
+* Bugfix: Fixed problem with spl_autoload_register() when using the Smarty PHP Template Engine
+  Thanks to Malte Paskuda and Michael Loesler for pointing this out and providing a patch!
+
 * New: Malte Paskuda contributed a PDO based SQLite storage backend
 
 ====================================================================================================

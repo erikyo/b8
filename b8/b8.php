@@ -17,8 +17,10 @@ namespace b8;
 spl_autoload_register(
     function ($class) {
         $parts = explode('\\', $class);
-        require_once __DIR__ . DIRECTORY_SEPARATOR . $parts[1]
-                     . DIRECTORY_SEPARATOR . $parts[2] . '.php';
+        if (count($parts) > 2 && $parts[0] == 'b8') {
+            require_once __DIR__ . DIRECTORY_SEPARATOR . $parts[1]
+                         . DIRECTORY_SEPARATOR . $parts[2] . '.php';
+        }
     }
 );
 
