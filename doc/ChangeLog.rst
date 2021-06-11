@@ -1,3 +1,5 @@
+* Change: Switched to utf8mb4 for MySQL storage backend to support the full UTF-8 charset.
+
 * Change: Switched from "LGPL 2.1 only" to "LGPL 3.0 or later", in agreement with all authors
 
 * Bugfix: Fixed problem with spl_autoload_register() when using the Smarty PHP Template Engine
