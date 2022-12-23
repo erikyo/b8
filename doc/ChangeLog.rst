@@ -56,6 +56,8 @@ Changed
 
 * Switched from "LGPL 2.1 only" to "LGPL 3.0 or later", in agreement with all authors.
 
+* Switched to utf8mb4 for MySQL storage backend to support the full UTF-8 charset.
+
 Deprecated
 ==========
 
