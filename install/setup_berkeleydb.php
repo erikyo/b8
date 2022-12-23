@@ -1,9 +1,8 @@
 <?php
 
-/* SPDX-FileCopyrightText: none
-
-   SPDX-License-Identifier: CC0-1.0
-*/
+// SPDX-FileCopyrightText: none
+//
+// SPDX-License-Identifier: CC0-1.0
 
 echo <<<END
 <?xml version="1.0" encoding="UTF-8"?>

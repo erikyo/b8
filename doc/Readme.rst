@@ -1,3 +1,7 @@
+.. SPDX-FileCopyrightText: 2006-2022 Tobias Leupold <tl at stonemx dot de>
+
+   SPDX-License-Identifier: CC-BY-SA-4.0
+
 .. |br| raw:: html
 
    <br />

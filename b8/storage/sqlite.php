@@ -1,9 +1,8 @@
 <?php
 
-/* SPDX-FileCopyrightText: 2021 Malte Paskuda <malte@paskuda.biz>
-
-   SPDX-License-Identifier: LGPL-3.0-or-later
-*/
+// SPDX-FileCopyrightText: 2021 Malte Paskuda <malte@paskuda.biz>
+//
+// SPDX-License-Identifier: LGPL-3.0-or-later
 
 namespace b8\storage;
 use PDO;

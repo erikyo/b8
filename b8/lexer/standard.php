@@ -1,10 +1,9 @@
 <?php
 
-/* SPDX-FileCopyrightText: 2006-2021 Tobias Leupold <tobias.leupold@gmx.de>
-   SPDX-FileCopyrightText: 2009 Oliver Lillie <ollie@buggedcom.co.uk>
-
-   SPDX-License-Identifier: LGPL-3.0-or-later
-*/
+// SPDX-FileCopyrightText: 2009 Oliver Lillie <ollie@buggedcom.co.uk>
+// SPDX-FileCopyrightText: 2006-2022 Tobias Leupold <tl at stonemx dot de>
+//
+// SPDX-License-Identifier: LGPL-3.0-or-later
 
 /**
  * A helper class to disassemble a text to tokens
