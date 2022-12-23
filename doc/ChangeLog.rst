@@ -1,9 +1,81 @@
-* Change: Switched from "LGPL 2.1 only" to "LGPL 3.0 or later", in agreement with all authors
+.. SPDX-FileCopyrightText: 2006-2022 Tobias Leupold <tl at stonemx dot de>
 
-* Bugfix: Fixed problem with spl_autoload_register() when using the Smarty PHP Template Engine
+   SPDX-License-Identifier: CC-BY-SA-4.0
+
+   The format of this file is inspired by keepachangelog.com, but uses ReStructuredText instead of
+   MarkDown. Keep the line length at no more than 100 characters (with the obvious exception of the
+   header template below, which needs to be indented by three spaces)
+
+   Here's the header template to be pasted at the top after a new release:
+
+   ====================================================================================================
+   [unreleased]
+   ====================================================================================================
+
+   Added
+   =====
+
+   * for new features.
+
+   Changed
+   =======
+
+   * for changes in existing functionality.
+
+   Deprecated
+   ==========
+
+   * for soon-to-be removed features.
+
+   Removed
+   =======
+
+   * for now removed features.
+
+   Fixed
+   =====
+
+   * for any bug fixes.
+
+   Security
+   ========
+
+   * in case of vulnerabilities.
+
+====================================================================================================
+[unreleased]
+====================================================================================================
+
+Added
+=====
+
+* Malte Paskuda contributed a PDO based SQLite storage backend.
+
+Changed
+=======
+
+* Switched from "LGPL 2.1 only" to "LGPL 3.0 or later", in agreement with all authors.
+
+Deprecated
+==========
+
+* for soon-to-be removed features.
+
+Removed
+=======
+
+* for now removed features.
+
+Fixed
+=====
+
+* Fixed problem with `spl_autoload_register()` when using the Smarty PHP Template Engine
   Thanks to Malte Paskuda and Michael Loesler for pointing this out and providing a patch!
 
-* New: Malte Paskuda contributed a PDO based SQLite storage backend
+Security
+========
+
+* in case of vulnerabilities.
 
 ====================================================================================================
 b8 0.7 released (18.03.2020)
