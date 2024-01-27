@@ -5,22 +5,14 @@
 // SPDX-License-Identifier: CC0-1.0
 
 echo <<<END
-<?xml version="1.0" encoding="UTF-8"?>
+<!doctype html>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<html lang="en">
 
 <head>
-
 <title>b8 Berkeley DB setup</title>
-
-<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-
-<meta name="dc.creator" content="Tobias Leupold"/>
-<meta name="dc.rights" content="Copyright (c) Tobias Leupold"/>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
@@ -40,36 +32,36 @@ function setup_db()
 
     echo 'Checking database file name &hellip; ';
     if($dbfile == '') {
-        echo "<span style=\"color:red;\">Please provide the name of the database file!</span><br/>\n";
+        echo "<span style=\"color:red;\">Please provide the name of the database file!</span><br>\n";
         return false;
     }
-    echo "$dbfile_escaped<br/>\n";
+    echo "$dbfile_escaped<br>\n";
 
     echo "Touching/Creating $dbfile_escaped &hellip; ";
     if(touch($dbfile) === false) {
-        echo "<span style=\"color:red;\">Failed to touch the database file. Please check the given filename and/or fix the permissions of $dbfile_directory.</span><br/>\n";
+        echo "<span style=\"color:red;\">Failed to touch the database file. Please check the given filename and/or fix the permissions of $dbfile_directory.</span><br>\n";
         return false;
     }
-    echo "done<br/>\n";
+    echo "done<br>\n";
 
     echo 'Setting file permissions to 0666 &hellip; ';
     if (chmod($dbfile, 0666) === false) {
-        echo "<span style=\"color:red;\">Failed to change the permissions of $dbfile_directory$dbfile_escaped. Please adjust them manually.</span><br />\n";
+        echo "<span style=\"color:red;\">Failed to change the permissions of $dbfile_directory$dbfile_escaped. Please adjust them manually.</span><br>\n";
         return false;
     }
     echo "done<br/>\n";
 
     echo 'Checking if the given file is empty &hellip; ';
     if (filesize($dbfile) > 0) {
-        echo "<span style=\"color:red;\">$dbfile_directory$dbfile_escaped is not empty. Can't create a new database. Please delete/empty this file or give another filename.</span><br />\n";
+        echo "<span style=\"color:red;\">$dbfile_directory$dbfile_escaped is not empty. Can't create a new database. Please delete/empty this file or give another filename.</span><br>\n";
         return false;
     }
-    echo "it is<br/>\n";
+    echo "it is<br>\n";
 
     echo "Connecting to $dbfile_escaped &hellip; ";
     $db = dba_open($dbfile, "c", $_POST['handler']);
     if ($db === false) {
-        echo "<span style=\"color:red;\">Could not connect to the database!</span><br/>\n";
+        echo "<span style=\"color:red;\">Could not connect to the database!</span><br>\n";
         return false;
     }
     echo "done<br/>\n";
@@ -79,7 +71,7 @@ function setup_db()
                    'b8*texts'     => '0 0' ];
     foreach($internals as $key => $value) {
         if(dba_insert($key, $value, $db) === false) {
-            echo "<span style=\"color:red;\">Failed to insert data!</span><br/>\n";
+            echo "<span style=\"color:red;\">Failed to insert data!</span><br>\n";
             return false;
         }
     }
@@ -88,10 +80,10 @@ function setup_db()
     echo 'Trying to read data from the database &hellip; ';
     $dbversion = dba_fetch('b8*dbversion', $db);
     if($dbversion != '3') {
-        echo "<span style=\"color:red;\">Failed to read data!</span><br />\n";
+        echo "<span style=\"color:red;\">Failed to read data!</span><br>\n";
         return false;
     }
-    echo "success<br/>\n";
+    echo "success<br>\n";
 
     dba_close($db);
     echo "</p>\n\n";
@@ -123,7 +115,7 @@ The following table shows all available DBA handlers. Please choose the "Berkele
 </p>
 
 <table>
-<tr><td></td><td><b>Handler</b></td><td><b>Description</b></td></tr>
+<tr><td colspan="2"><b>Handler</b></td><td><b>Description</b></td></tr>
 
 END;
 
@@ -140,7 +132,7 @@ foreach(dba_handlers(true) as $name => $version) {
         }
     }
 
-    echo "<tr><td><input type=\"radio\" name=\"handler\" value=\"$name\"$checked /></td><td>$name</td><td>$version</td></tr>\n";
+    echo "<tr><td><input type=\"radio\" name=\"handler\" value=\"$name\"$checked></td><td>$name</td><td>$version</td></tr>\n";
 }
 
 echo <<<END
@@ -152,13 +144,8 @@ echo <<<END
 Please give the name of the desired database file. It will be created in the directory where this script is located.
 </p>
 
-<p>
-<input type="text" name="dbfile" value="wordlist.db" />
-</p>
-
-<p>
-<input type="submit" value="Create the database" />
-</p>
+<p><input type="text" name="dbfile" value="wordlist.db"></p>
+<p><input type="submit" value="Create the database"></p>
 
 </form>
 
