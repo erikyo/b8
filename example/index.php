@@ -1,9 +1,8 @@
 <?php
 
-/* SPDX-FileCopyrightText: none
-
-   SPDX-License-Identifier: CC0-1.0
-*/
+// SPDX-FileCopyrightText: none
+//
+// SPDX-License-Identifier: CC0-1.0
 
 /***************************************************************
  * This is an example script demonstrating how b8 can be used. *
@@ -69,27 +68,17 @@ function formatRating($rating)
 }
 
 echo <<<END
-<?xml version="1.0" encoding="UTF-8"?>
+<!doctype html>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<html lang="en">
 
 <head>
-
 <title>example b8 interface</title>
-
-<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-
-<meta name="dc.creator" content="Tobias Leupold" />
-<meta name="dc.rights" content="Copyright (c) by Tobias Leupold" />
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
-
-<div>
 
 <h1>example b8 interface</h1>
 
@@ -98,7 +87,7 @@ END;
 
 if (! isset($config_b8)) {
     echo "<p style=\"color:red;\"><b>Please adjust the settings in this file first!</b></p>\n\n";
-    echo "\n\n</div>\n\n</body>\n\n</html>";
+    echo "</body>\n\n</html>";
     exit();
 }
 
@@ -118,9 +107,9 @@ if (isset($_POST['action']) and $_POST['text'] ==  '') {
         $b8 = new b8\b8($config_b8, $config_storage, $config_lexer, $config_degenerator);
     }
     catch(Exception $e) {
-        echo "<b>example:</b> Could not initialize b8.<br/>\n";
+        echo "<b>example:</b> Could not initialize b8.<br>\n";
         echo "<b>Error message:</b> ", $e->getMessage();
-        echo "\n\n</div>\n\n</body>\n\n</html>";
+        echo "</body>\n\n</html>";
         exit();
     }
 
@@ -138,12 +127,12 @@ if (isset($_POST['action']) and $_POST['text'] ==  '') {
             $ratingAfter = $b8->classify($text);
 
             echo "<p>Saved the text as Spam</p>\n\n";
-            echo "<div><table>\n";
+            echo "<table>\n";
             echo '<tr><td>Classification before learning:</td><td>' . formatRating($ratingBefore)
                  . "</td></tr>\n";
             echo '<tr><td>Classification after learning:</td><td>'  . formatRating($ratingAfter)
                  . "</td></tr>\n";
-            echo "</table></div>\n\n";
+            echo "</table>\n\n";
 
             break;
 
@@ -154,12 +143,12 @@ if (isset($_POST['action']) and $_POST['text'] ==  '') {
 
             echo "<p>Saved the text as Ham</p>\n\n";
 
-            echo "<div><table>\n";
+            echo "<table>\n";
             echo '<tr><td>Classification before learning:</td><td>' . formatRating($ratingBefore)
                  . "</td></tr>\n";
             echo '<tr><td>Classification after learning:</td><td>'  . formatRating($ratingAfter)
                  . "</td></tr>\n";
-            echo "</table></div>\n\n";
+            echo "</table>\n\n";
 
             break;
 
@@ -181,7 +170,6 @@ if (isset($_POST['action']) and $_POST['text'] ==  '') {
 }
 
 echo <<<END
-<div>
 <form action="{$_SERVER['PHP_SELF']}" method="post">
 <div>
 <textarea name="text" cols="50" rows="16">$postedText</textarea>
@@ -200,21 +188,17 @@ echo <<<END
 </tr>
 </table>
 </form>
-</div>
 
-</div>
 
 END;
 
 if($time_start !== null) {
 echo <<<END
-<div>
 <table border="0">
 <tr><td>Memory used:     </td><td>$mem_used&thinsp;MB</td></tr>
 <tr><td>Peak memory used:</td><td>$peak_mem_used&thinsp;MB</td></tr>
 <tr><td>Time taken:      </td><td>$time_taken&thinsp;sec</td></tr>
 </table>
-</div>
 
 END;
 }
