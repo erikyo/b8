@@ -2,7 +2,7 @@
 
 ## A statistical spam filter implemented in PHP
 
-b8 is a statistical ("Bayesian") spam filter implemented in PHP. It is intended to keep your weblog or guestbook spam-free. The filter can be used anywhere in your PHP code and tells you whether a text is spam or not, using statistical text analysis.
+b8 is a statistical ("Bayesian") spam filter implemented in PHP (at least 7.2). It is intended to keep your weblog or guestbook spam-free. The filter can be used anywhere in your PHP code and tells you whether a text is spam or not, using statistical text analysis.
 
 ## Homepage
 
