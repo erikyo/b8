@@ -62,7 +62,9 @@ class DBA extends StorageBase
 
     protected function setupBackend(array $config)
     {
-        $is_resource = isset($config['resource']) && is_resource($config['resource']) && get_resource_type($config['resource']) === 'dba';
+        $is_resource = isset($config['resource'])
+                       && is_resource($config['resource'])
+                       && get_resource_type($config['resource']) === 'dba';
         $is_object = isset($config['resource']) && $config['resource'] instanceof \Dba\Connection;
 
         if (!$is_resource && !$is_object) {

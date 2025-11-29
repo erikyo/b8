@@ -116,7 +116,15 @@ class B8
         $this->degenerator = new $degenerator_class($enhanced_degenerator_config);
 
         // Set up the storage backend first (needed for IDF calculator)
-        $class = '\\B8\\Storage\\' . ucfirst($this->config['storage']);
+        $storage_backends = [
+            'dba' => 'DBA',
+            'mysql' => 'MySQL',
+            'sqlite' => 'SQLite'
+        ];
+        $storage_name = strtolower($this->config['storage']);
+        $class_name = $storage_backends[$storage_name] ?? ucfirst($this->config['storage']);
+
+        $class = '\\B8\\Storage\\' . $class_name;
         $this->storage = new $class($config_storage, $this->degenerator);
 
         // Initialize the IDF calculator if TF-IDF is enabled
