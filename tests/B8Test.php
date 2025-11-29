@@ -1,6 +1,6 @@
 <?php
 
-namespace Testing\Tests;
+namespace tests;
 
 use B8\B8;
 use PHPUnit\Framework\TestCase;
