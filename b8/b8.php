@@ -20,27 +20,27 @@ use Exception;
 
 class B8
 {
-    const DBVERSION = 4;
+    public const DBVERSION = 4;
 
-    const SPAM = 'spam';
-    const HAM = 'ham';
-    const LEARN = 'learn';
-    const UNLEARN = 'unlearn';
+    public const SPAM = 'spam';
+    public const HAM = 'ham';
+    public const LEARN = 'learn';
+    public const UNLEARN = 'unlearn';
 
-    const CLASSIFIER_TEXT_MISSING = 'CLASSIFIER_TEXT_MISSING';
+    public const CLASSIFIER_TEXT_MISSING = 'CLASSIFIER_TEXT_MISSING';
 
-    const TRAINER_TEXT_MISSING = 'TRAINER_TEXT_MISSING';
-    const TRAINER_CATEGORY_MISSING = 'TRAINER_CATEGORY_MISSING';
-    const TRAINER_CATEGORY_FAIL = 'TRAINER_CATEGORY_FAIL';
+    public const TRAINER_TEXT_MISSING = 'TRAINER_TEXT_MISSING';
+    public const TRAINER_CATEGORY_MISSING = 'TRAINER_CATEGORY_MISSING';
+    public const TRAINER_CATEGORY_FAIL = 'TRAINER_CATEGORY_FAIL';
 
-    const INTERNALS_TEXTS = 'b8*texts';
-    const INTERNALS_DBVERSION = 'b8*dbversion';
+    public const INTERNALS_TEXTS = 'b8*texts';
+    public const INTERNALS_DBVERSION = 'b8*dbversion';
 
-    const KEY_DB_VERSION = 'dbversion';
-    const KEY_COUNT_HAM = 'count_ham';
-    const KEY_COUNT_SPAM = 'count_spam';
-    const KEY_TEXTS_HAM = 'texts_ham';
-    const KEY_TEXTS_SPAM = 'texts_spam';
+    public const KEY_DB_VERSION = 'dbversion';
+    public const KEY_COUNT_HAM = 'count_ham';
+    public const KEY_COUNT_SPAM = 'count_spam';
+    public const KEY_TEXTS_HAM = 'texts_ham';
+    public const KEY_TEXTS_SPAM = 'texts_spam';
 
     private array $config = [
         'lexer' => 'standard',
@@ -541,7 +541,7 @@ class B8
             && $this->idf_calc !== null
             && $action === B8::LEARN
         ) {
-            $this->idf_calc->update_document($tokens);
+            $this->idf_calc->updateDocument($tokens);
         }
 
         // Pass the tokens and what to do with it to the storage backend

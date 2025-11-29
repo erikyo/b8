@@ -10,7 +10,7 @@
     }
   ],
   "require": {
-    "php": "^7.4|^8",
+    "php": "^7.4|^8.1",
     "ext-pdo": "*",
     "ext-dba": "*",
     "ext-sqlite3": "*",
@@ -25,8 +25,8 @@
   },
   "scripts": {
     "test": "phpunit",
-    "phpcs": "phpcs B8 --standard=PSR12",
-    "phpcbf": "phpcbf B8 --standard=PSR12",
+    "phpcs": "phpcs B8 --standard=phpcs.xml",
+    "phpcbf": "phpcbf B8 --standard=phpcs.xml",
     "phpstan": "phpstan analyse",
     "fix-cs": "php-cs-fixer fix B8"
   },

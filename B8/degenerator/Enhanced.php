@@ -16,13 +16,13 @@ use Exception;
 
 class Enhanced
 {
-    public $config = [
+    public array $config = [
         'multibyte' => true,
         'encoding'  => 'UTF-8',
         'degenerate_ngrams' => true  // New option
     ];
 
-    public $degenerates = [];
+    public array $degenerates = [];
 
     /**
      * Constructs the enhanced degenerator.
@@ -69,10 +69,10 @@ class Enhanced
 
         foreach ($words as $word) {
             // Detect if this is an n-gram (contains space)
-            if ($this->is_ngram($word)) {
-                $degenerates[$word] = $this->degenerate_ngram($word);
+            if ($this->isNgram($word)) {
+                $degenerates[$word] = $this->degenerateNgram($word);
             } else {
-                $degenerates[$word] = $this->degenerate_word($word);
+                $degenerates[$word] = $this->degenerateWord($word);
             }
         }
 
@@ -86,7 +86,7 @@ class Enhanced
      * @param string $token The token to check
      * @return bool True if token is an n-gram
      */
-    private function is_ngram(string $token): bool
+    private function isNgram(string $token): bool
     {
         return strpos($token, ' ') !== false;
     }
@@ -99,7 +99,7 @@ class Enhanced
      * @param string $ngram The n-gram to degenerate
      * @return array An array of degenerated n-grams
      */
-    private function degenerate_ngram(string $ngram): array
+    private function degenerateNgram(string $ngram): array
     {
         // Check cache first
         if (isset($this->degenerates[$ngram])) {
@@ -118,17 +118,17 @@ class Enhanced
 
         // Degenerate each word individually
         foreach ($words as $word) {
-            $degenerated = $this->degenerate_word($word);
+            $degenerated = $this->degenerateWord($word);
             // Include the original word too
             array_unshift($degenerated, $word);
             $degenerated_components[] = $degenerated;
         }
 
         // Generate combinations of degenerated forms
-        $ngram_degenerates = $this->combine_degenerated_words($degenerated_components);
+        $ngram_degenerates = $this->combineDegeneratedWords($degenerated_components);
 
         // Remove duplicates and the original n-gram
-        $ngram_degenerates = $this->delete_duplicates($ngram, $ngram_degenerates);
+        $ngram_degenerates = $this->deleteDuplicates($ngram, $ngram_degenerates);
 
         // Cache the result
         $this->degenerates[$ngram] = $ngram_degenerates;
@@ -145,7 +145,7 @@ class Enhanced
      * @param array $components Array of arrays, each containing degenerated forms of a word
      * @return array Array of combined n-grams
      */
-    private function combine_degenerated_words(array $components): array
+    private function combineDegeneratedWords(array $components): array
     {
         // Start with the first word's variations
         $combinations = array_map(function ($word) {
@@ -191,7 +191,7 @@ class Enhanced
      * @param string $word The word
      * @return array An array of degenerated words
      */
-    private function degenerate_word(string $word): array
+    private function degenerateWord(string $word): array
     {
         // Check for any stored words so the process doesn't have to repeat
         if (isset($this->degenerates[$word])) {
@@ -224,7 +224,7 @@ class Enhanced
         $upper_lower[] = $first;
 
         // Delete duplicate upper/lower versions
-        $degenerate = $this->delete_duplicates($word, $upper_lower);
+        $degenerate = $this->deleteDuplicates($word, $upper_lower);
 
         // Append the original word
         $degenerate[] = $word;
@@ -253,7 +253,7 @@ class Enhanced
 
         // Some degenerates are the same as the original word. These don't have to be fetched, so we
         // create a new array with only new tokens
-        $degenerate = $this->delete_duplicates($word, $degenerate);
+        $degenerate = $this->deleteDuplicates($word, $degenerate);
 
         // Store the list of degenerates for the token to prevent unnecessary re-processing
         $this->degenerates[$word] = $degenerate;
@@ -269,7 +269,7 @@ class Enhanced
      * @param array $list The list to process
      * @return array The list without duplicates
      */
-    private function delete_duplicates(string $word, array $list): array
+    private function deleteDuplicates(string $word, array $list): array
     {
         $list_processed = [];
 
@@ -289,13 +289,13 @@ class Enhanced
      * @access public
      * @return array Statistics about the degenerate cache
      */
-    public function get_cache_stats(): array
+    public function getCacheStats(): array
     {
         $unigram_count = 0;
         $ngram_count = 0;
 
         foreach (array_keys($this->degenerates) as $token) {
-            if ($this->is_ngram($token)) {
+            if ($this->isNgram($token)) {
                 $ngram_count++;
             } else {
                 $unigram_count++;
@@ -316,7 +316,7 @@ class Enhanced
      * @access public
      * @return void
      */
-    public function clear_cache()
+    public function clearCache()
     {
         $this->degenerates = [];
     }

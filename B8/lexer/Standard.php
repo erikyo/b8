@@ -19,10 +19,9 @@ use Exception;
 
 class Standard
 {
-    const LEXER_TEXT_NOT_STRING = 'LEXER_TEXT_NOT_STRING';
-    const LEXER_TEXT_EMPTY = 'LEXER_TEXT_EMPTY';
+    private const LEXER_TEXT_EMPTY = 'LEXER_TEXT_EMPTY';
 
-    const LEXER_NO_TOKENS = 'b8*no_tokens';
+    private const LEXER_NO_TOKENS = 'b8*no_tokens';
 
     private array $config = [
         'min_size' => 3,
@@ -61,7 +60,7 @@ class Standard
      *
      * @throws Exception If an unknown configuration key is provided
      */
-    function __construct(array $config)
+    public function __construct(array $config)
     {
         // Validate config data
         foreach ($config as $name => $value) {

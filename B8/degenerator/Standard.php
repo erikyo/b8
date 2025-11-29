@@ -65,7 +65,7 @@ class Standard
         $degenerates = [];
 
         foreach ($words as $word) {
-            $degenerates[$word] = $this->degenerate_word($word);
+            $degenerates[$word] = $this->degenerateWord($word);
         }
 
         return $degenerates;
@@ -78,7 +78,7 @@ class Standard
      * @param string $word The word
      * @return array An array of degenerated words
      */
-    private function degenerate_word(string $word): array
+    private function degenerateWord(string $word): array
     {
         // Check for any stored words so the process doesn't have to repeat
         if (isset($this->degenerates[$word]) === true) {
@@ -110,7 +110,7 @@ class Standard
         $upper_lower[] = $first;
 
         // Delete duplicate upper/lower versions
-        $degenerate = $this->delete_duplicates($word, $upper_lower);
+        $degenerate = $this->deleteDuplicates($word, $upper_lower);
 
         // Append the original word
         $degenerate[] = $word;
@@ -139,7 +139,7 @@ class Standard
 
         // Some degenerates are the same as the original word. These don't have to be fetched, so we
         // create a new array with only new tokens
-        $degenerate = $this->delete_duplicates($word, $degenerate);
+        $degenerate = $this->deleteDuplicates($word, $degenerate);
 
         // Store the list of degenerates for the token to prevent unnecessary re-processing
         $this->degenerates[$word] = $degenerate;
@@ -155,7 +155,7 @@ class Standard
      * @param array $list The list to process
      * @return array The list without duplicates
      */
-    private function delete_duplicates(string $word, array $list): array
+    private function deleteDuplicates(string $word, array $list): array
     {
         $list_processed = [];
 

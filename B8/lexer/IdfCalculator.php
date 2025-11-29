@@ -5,20 +5,20 @@
 
 declare(strict_types=1);
 
+namespace B8\lexer;
+
+use B8\B8;
+
 /**
  * IDF (Inverse Document Frequency) calculator for TF-IDF weighting
  *
  * @package B8
  */
 
-namespace B8\lexer;
-
-use B8\B8;
-
 class IdfCalculator
 {
-    const IDF_TOTAL_DOCS = 'idf*total_docs';
-    const IDF_DOC_PREFIX = 'idf*doc_';
+    private const IDF_TOTAL_DOCS = 'idf*total_docs';
+    private const IDF_DOC_PREFIX = 'idf*doc_';
 
     private object $storage;  // Cache for document counts per token
     private int $total_documents = 0;
@@ -37,7 +37,7 @@ class IdfCalculator
     public function __construct(object $storage)
     {
         $this->storage = $storage;
-        $this->load_total_documents();
+        $this->loadTotalDocuments();
     }
 
     /**
@@ -45,7 +45,7 @@ class IdfCalculator
      *
      * @access private
      */
-    private function load_total_documents(): void
+    private function loadTotalDocuments(): void
     {
         $result = $this->storage->get([self::IDF_TOTAL_DOCS]);
         $this->total_documents = 0;
@@ -61,7 +61,7 @@ class IdfCalculator
      * @access public
      * @param  array $tokens Array of unique tokens in the document
      */
-    public function update_document(array $tokens): void
+    public function updateDocument(array $tokens): void
     {
         // Increment total document count
         $this->total_documents++;
@@ -152,7 +152,7 @@ class IdfCalculator
      * @access public
      * @return int Total document count
      */
-    public function get_total_documents(): int
+    public function getTotalDocuments(): int
     {
         return $this->total_documents;
     }

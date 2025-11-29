@@ -17,9 +17,8 @@ namespace B8\lexer;
 
 class Enhanced
 {
-    const LEXER_TEXT_NOT_STRING = 'LEXER_TEXT_NOT_STRING';
-    const LEXER_TEXT_EMPTY = 'LEXER_TEXT_EMPTY';
-    const LEXER_NO_TOKENS = 'b8*no_tokens';
+    private const LEXER_TEXT_EMPTY = 'LEXER_TEXT_EMPTY';
+    private const LEXER_NO_TOKENS = 'b8*no_tokens';
 
     private array $config = [
         'min_size' => 3,

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-Ruleset -->
+<ruleset name="Example">
+
+    <description>An example PHP CodeSniffer configuration.</description>
+
+    <rule ref="PSR12" />
+
+    <arg name="colors"/>
+    <arg name="cache" value=".phpcs-cache"/>
+    <arg name="parallel" value="10"/>
+
+    <file>.</file>
+
+    <!-- Danger! Exclude patterns apply to the full file path, including parent directories of the current repository. -->
+    <!-- Don't exclude common directory names like `build`, which would fail on Travis CI because of /home/travis/build/acquia/<project>. -->
+    <!-- @see https://github.com/squizlabs/PHP_CodeSniffer/issues/981 -->
+    <exclude-pattern>vendor/*</exclude-pattern>
+
+</ruleset>

@@ -130,14 +130,16 @@ abstract class StorageBase
         if (!$this->isInitialized()) {
             if (!$this->initialize()) {
                 if (!$this->isUpToDate()) {
-                    throw new Exception( StorageBase::class . ': Unable  v' . (string) B8::DBVERSION . ' database.' );
+                    throw new Exception(StorageBase::class . ': Unable  v' . (string) B8::DBVERSION . ' database.');
                 }
             }
         }
 
         $internals = $this->getInternals();
         if ($internals[B8::KEY_DB_VERSION] !== B8::DBVERSION) {
-            throw new Exception(StorageBase::class . ': The connected database is not a B8 v' . (string) B8::DBVERSION . ' database.');
+            throw new Exception(
+                StorageBase::class . ': The connected database is not a B8 v' . (string) B8::DBVERSION . ' database.'
+            );
         }
     }
 

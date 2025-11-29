@@ -44,12 +44,16 @@ class MySQL extends StorageBase
         }
 
         // If the table was created, then insert the internals
-        $stmt = $this->mysql->prepare("INSERT INTO " . $this->table . " (`token`, `count_ham`) VALUES ('b8*dbversion', '3')");
+        $stmt = $this->mysql->prepare(
+            "INSERT INTO " . $this->table . " (`token`, `count_ham`) VALUES ('b8*dbversion', '3')"
+        );
         if ($stmt) {
             $stmt->execute();
         }
 
-        $stmt = $this->mysql->prepare("INSERT INTO " . $this->table . " (`token`, `count_ham`, `count_spam`) VALUES ('b8*texts', '0', '0');");
+        $stmt = $this->mysql->prepare(
+            "INSERT INTO " . $this->table . " (`token`, `count_ham`, `count_spam`) VALUES ('b8*texts', '0', '0');"
+        );
         if ($stmt) {
             $stmt->execute();
         }
@@ -62,14 +66,16 @@ class MySQL extends StorageBase
         try {
             $result = $this->mysql->query("SELECT * FROM " . $this->table . " LIMIT 1");
             return $result !== false;
-        } catch ( Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
 
     public function isUpToDate(): bool
     {
-        return intval($this->mysql->query("SELECT * FROM " . $this->table . " WHERE token = 'b8*dbversion'")) === B8::DBVERSION;
+        return intval($this->mysql->query(
+            "SELECT * FROM " . $this->table . " WHERE token = 'b8*dbversion'"
+        )) === B8::DBVERSION;
     }
 
     protected function setupBackend(array $config)

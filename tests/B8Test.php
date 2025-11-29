@@ -164,14 +164,14 @@ class B8Test extends TestCase
         $this->assertInstanceOf(\B8\lexer\IdfCalculator::class, $idf);
 
         // Check the total number of documents
-        $this->assertEquals(3, $idf->get_total_documents(), "The total number of documents should be 3.");
+        $this->assertEquals(3, $idf->getTotalDocuments(), "The total number of documents should be 3.");
 
         // Learn more documents
         $b8->learn($this->test_texts['spam2'], B8::SPAM);
         $b8->learn($this->test_texts['spam3'], B8::SPAM);
 
         // then check if the total number of documents was updated
-        $this->assertGreaterThan(4, $idf->get_total_documents(), "The total number of documents should be 5.");
+        $this->assertGreaterThan(4, $idf->getTotalDocuments(), "The total number of documents should be 5.");
 
         // Check again the classification for a text
         $spamProbability = $b8->classify("I've finalized the detailed plan for the next phase");
