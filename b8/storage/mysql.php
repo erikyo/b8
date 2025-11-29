@@ -5,91 +5,175 @@
 //
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
-namespace b8\storage;
+declare(strict_types=1);
+
+namespace B8\storage;
+
+use B8\B8;
+use Exception;
+use mysqli;
 
 /**
  * A MySQL storage backend
  *
- * @package b8
+ * @package B8
  */
 
-class mysql extends storage_base
+class MySQL extends StorageBase
 {
+    private mysqli $mysql;
+    private string $table;
 
-    private $mysql = null;
-    private $table = null;
-
-    protected function setup_backend(array $config)
+    /**
+     * We should create the table if it doesn't exist and fill it with the internals.
+     *
+     * @return bool True on success (table created and initialized), false on the other cases
+     */
+    protected function initialize(): bool
     {
-        if (! isset($config['resource'])
-            || get_class($config['resource']) !== 'mysqli') {
+        // Create the table if it doesn't exist
+        $r = $this->mysql->query("CREATE TABLE IF NOT EXISTS `" . $this->table . "` (
+            `token` varchar(190) character set utf8mb4 collate utf8mb4_bin NOT NULL,
+            `count_ham` int unsigned default NULL,
+            `count_spam` int unsigned default NULL,
+            PRIMARY KEY (`token`)
+        ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;");
 
-            throw new \Exception(mysql::class . ": No valid mysqli object passed");
+        if ($r === false) {
+            return false;
+        }
+
+        // If the table was created, then insert the internals
+        $stmt = $this->mysql->prepare("INSERT INTO " . $this->table . " (`token`, `count_ham`) VALUES ('b8*dbversion', '3')");
+        if ($stmt) {
+            $stmt->execute();
+        }
+
+        $stmt = $this->mysql->prepare("INSERT INTO " . $this->table . " (`token`, `count_ham`, `count_spam`) VALUES ('b8*texts', '0', '0');");
+        if ($stmt) {
+            $stmt->execute();
+        }
+
+        return true;
+    }
+
+    public function isInitialized(): bool
+    {
+        try {
+            $result = $this->mysql->query("SELECT * FROM " . $this->table . " LIMIT 1");
+            return $result !== false;
+        } catch ( Exception $e) {
+            return false;
+        }
+    }
+
+    public function isUpToDate(): bool
+    {
+        return intval($this->mysql->query("SELECT * FROM " . $this->table . " WHERE token = 'b8*dbversion'")) === B8::DBVERSION;
+    }
+
+    protected function setupBackend(array $config)
+    {
+        if (
+            !isset($config['resource'])
+            || !$config['resource'] instanceof mysqli
+        ) {
+            throw new Exception(MySQL::class . ": No valid mysqli object passed");
         }
         $this->mysql = $config['resource'];
 
-        if (! isset($config['table'])) {
-            throw new \Exception(mysql::class . ": No b8 wordlist table name passed");
+        if (!isset($config['table'])) {
+            throw new Exception(MySQL::class . ": No B8 wordlist table name passed");
         }
-        $this->table = $config['table'];
+        $this->table = (string) $config['table'];
     }
 
-    protected function fetch_token_data(array $tokens)
+    protected function fetchTokenData(array $tokens): array
     {
         $data = [];
+
+        if (empty($tokens)) {
+            return $data;
+        }
 
         $escaped = [];
         foreach ($tokens as $token) {
             $escaped[] = $this->mysql->real_escape_string($token);
         }
-        $result = $this->mysql->query('SELECT token, count_ham, count_spam'
-                                      . ' FROM ' . $this->table
-                                      . ' WHERE token IN '
-                                      . "('" . implode("','", $escaped) . "')");
 
-        while ($row = $result->fetch_row()) {
-            $data[$row[0]] = [ \b8\b8::KEY_COUNT_HAM  => $row[1],
-                               \b8\b8::KEY_COUNT_SPAM => $row[2] ];
+        // prepared statements with parameter binding
+        $placeholders = implode(',', array_fill(0, count($tokens), '?'));
+        $query = "SELECT token, count_ham, count_spam FROM {$this->table} WHERE token IN ($placeholders)";
+        $result = $this->mysql->query($query);
+
+        if ($result) {
+            while ($row = $result->fetch_row()) {
+                $data[$row[0]] = [
+                    B8::KEY_COUNT_HAM => (int) $row[1],
+                    B8::KEY_COUNT_SPAM => (int) $row[2]
+                ];
+            }
+            $result->free_result();
         }
-
-        $result->free_result();
 
         return $data;
     }
 
-    protected function add_token(string $token, array $count)
+    protected function addToken(string $token, array $count): bool
     {
-        $query = $this->mysql->prepare('INSERT INTO ' . $this->table
-                                       . '(token, count_ham, count_spam) VALUES(?, ?, ?)');
-        $query->bind_param('sii', $token, $count[\b8\b8::KEY_COUNT_HAM],
-                                          $count[\b8\b8::KEY_COUNT_SPAM]);
-        $query->execute();
+        $stmt = $this->mysql->prepare('INSERT INTO ' . $this->table . '(token, count_ham, count_spam) VALUES(?, ?, ?)');
+        if (!$stmt) {
+            return false;
+        }
+
+        $ham = (int) $count[B8::KEY_COUNT_HAM];
+        $spam = (int) $count[B8::KEY_COUNT_SPAM];
+
+        $stmt->bind_param('sii', $token, $ham, $spam);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        return $result;
     }
 
-    protected function update_token(string $token, array $count)
+    protected function updateToken(string $token, array $count): bool
     {
-        $query = $this->mysql->prepare('UPDATE ' . $this->table
-                                       . ' SET count_ham = ?, count_spam = ? WHERE token = ?');
-        $query->bind_param('iis', $count[\b8\b8::KEY_COUNT_HAM], $count[\b8\b8::KEY_COUNT_SPAM],
-                                  $token);
-        $query->execute();
+        $stmt = $this->mysql->prepare('UPDATE ' . $this->table . ' SET count_ham = ?, count_spam = ? WHERE token = ?');
+        if (!$stmt) {
+            return false;
+        }
+
+        $ham = (int) $count[B8::KEY_COUNT_HAM];
+        $spam = (int) $count[B8::KEY_COUNT_SPAM];
+
+        $stmt->bind_param('iis', $ham, $spam, $token);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        return $result;
     }
 
-    protected function delete_token(string $token)
+    protected function deleteToken(string $token): bool
     {
-        $query = $this->mysql->prepare('DELETE FROM ' . $this->table . ' WHERE token = ?');
-        $query->bind_param('s', $token);
-        $query->execute();
+        $stmt = $this->mysql->prepare('DELETE FROM ' . $this->table . ' WHERE token = ?');
+        if (!$stmt) {
+            return false;
+        }
+
+        $stmt->bind_param('s', $token);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        return $result;
     }
 
-    protected function start_transaction()
+    protected function startTransaction(): void
     {
         $this->mysql->begin_transaction();
     }
 
-    protected function finish_transaction()
+    protected function finishTransaction(): void
     {
         $this->mysql->commit();
     }
-
 }
