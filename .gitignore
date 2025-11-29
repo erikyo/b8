@@ -1,0 +1,12 @@
+# The composer directory
+vendor
+
+# Documentation
+doc
+
+# the cache directory
+*.cache
+
+# IDE
+*.idea
+*.vscode

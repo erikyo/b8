@@ -1,0 +1,42 @@
+name: Coding Standards
+
+on: pull_request
+
+jobs:
+  phpcs:
+    name: Check Coding Standards
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [ '7.4', '8.2', 'latest' ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer
+          extensions: mysql
+          coverage: none
+
+      - name: Install dependencies
+        run: composer update
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress
+
+      - name: Regenerate the autoloader files
+        run: composer dump-autoload --optimize
+
+      - name: Run PHP Code Sniffer
+        run: composer run phpcs
+
+      - name: Run PHP Code Beautifier
+        run: composer run phpcbf
+
+      - name: Run PHPStan
+        run: composer run phpstan
+
+

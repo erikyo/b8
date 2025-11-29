@@ -1,0 +1,259 @@
+<?php
+
+// SPDX-FileCopyrightText: 2009 Oliver Lillie <ollie@buggedcom.co.uk>
+// SPDX-FileCopyrightText: 2006-2022 Tobias Leupold <tl at stonemx dot de>
+//
+// SPDX-License-Identifier: LGPL-3.0-or-later
+
+/**
+ * A helper class to disassemble a text to tokens
+ *
+ * @package B8
+ */
+
+declare(strict_types=1);
+
+namespace B8\Lexer;
+
+use Exception;
+
+class Standard
+{
+    private const LEXER_TEXT_EMPTY = 'LEXER_TEXT_EMPTY';
+
+    private const LEXER_NO_TOKENS = 'b8*no_tokens';
+
+    private array $config = [
+        'min_size' => 3,
+        'max_size' => 30,
+        'get_uris' => true,
+        'get_html' => true,
+        'get_bbcode' => false,
+        'allow_numbers' => false
+    ];
+
+    private ?array $tokens = null;
+    private ?string $processed_text = null;
+
+    // The regular expressions we use to split the text to tokens
+    private array $regexp = [
+        'raw_split' => '/[\s,\.\/"\:;\|<>\-_\[\]{}\+=\)\(\*\&\^%]+/',
+        'ip' => '/([A-Za-z0-9\_\-\.]+)/',
+        'uris' => '/([A-Za-z0-9\_\-]*\.[A-Za-z0-9\_\-\.]+)/',
+        'html' => '/(<.+?>)/',
+        'bbcode' => '/(\[.+?\])/',
+        'tagname' => '/(.+?)\s/',
+        'numbers' => '/^[0-9]+$/'
+    ];
+
+    /**
+     * Constructs the lexer.
+     *
+     * @access public
+     *
+     * @param array $config The configuration: [ 'min_size'      => int,
+     *                       'max_size'      => int,
+     *                       'get_uris'      => bool,
+     *                       'get_html'      => bool,
+     *                       'get_bbcode'    => bool,
+     *                       'allow_numbers' => bool ]
+     *
+     * @throws Exception If an unknown configuration key is provided
+     */
+    public function __construct(array $config)
+    {
+        // Validate config data
+        foreach ($config as $name => $value) {
+            switch ($name) {
+                case 'min_size':
+                case 'max_size':
+                    $this->config[$name] = (int) $value;
+                    break;
+                case 'allow_numbers':
+                case 'get_uris':
+                case 'get_html':
+                case 'get_bbcode':
+                    $this->config[$name] = (bool) $value;
+                    break;
+                default:
+                    throw new Exception(
+                        Standard::class . ": Unknown configuration key: "
+                        . "\"$name\""
+                    );
+            }
+        }
+    }
+
+    /**
+     * Splits a text to tokens.
+     *
+     * @access public
+     * @param  string $text The text to disassemble
+     * @return array|string Returns a list of tokens or an error code
+     */
+    public function getTokens(string $text)
+    {
+        // Check if it's empty
+        if (empty($text) === true) {
+            return self::LEXER_TEXT_EMPTY;
+        }
+
+        // Re-convert the text to the original characters coded in UTF-8, as they have been coded in
+        // html entities during the post-process
+        $this->processed_text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
+
+        // Reset the token list
+        $this->tokens = array();
+
+        if ($this->config['get_uris'] === true) {
+            // Get URIs
+            $this->getUris($this->processed_text);
+        }
+
+        if ($this->config['get_html'] === true) {
+            // Get HTML
+            $this->getMarkup($this->processed_text, $this->regexp['html']);
+        }
+
+        if ($this->config['get_bbcode'] === true) {
+            // Get BBCode
+            $this->getMarkup($this->processed_text, $this->regexp['bbcode']);
+        }
+
+        // We always want to do a raw split of the (remaining) text, so:
+        $this->rawSplit($this->processed_text);
+
+        // Be sure not to return an empty array
+        if (count($this->tokens) == 0) {
+            $this->tokens[self::LEXER_NO_TOKENS] = 1;
+        }
+
+        // Return a list of all found tokens
+        return $this->tokens;
+    }
+
+    /**
+     * Gets URIs.
+     *
+     * @access private
+     * @param  string $text
+     * @return void
+     */
+    private function getUris(string $text): void
+    {
+        // Find URIs
+        preg_match_all($this->regexp['uris'], $text, $raw_tokens);
+        foreach ($raw_tokens[1] as $word) {
+            // Remove a possible trailing dot
+            $word = rtrim($word, '.');
+            // Try to add the found tokens to the list
+            $this->addToken($word, $word);
+            // Also process the parts of the found URIs
+            $this->rawSplit($word);
+        }
+    }
+
+    /**
+     * Checks the validity of a token and adds it to the token list if it's valid.
+     *
+     * @access private
+     *
+     * @param string $token
+     * @param string|null $word_to_remove Word to remove from the processed string
+     *
+     * @return void
+     */
+    private function addToken(string $token, ?string $word_to_remove = null): void
+    {
+        // Check the validity of the token
+        if (!$this->isValid($token)) {
+            return;
+        }
+
+        // Add it to the list or increase it's counter
+        if (!isset($this->tokens[$token])) {
+            $this->tokens[$token] = 1;
+        } else {
+            $this->tokens[$token] += 1;
+        }
+
+        // If requested, remove the word or it's original version from the text
+        if ($word_to_remove !== null) {
+            $this->processed_text = str_replace($word_to_remove, '', $this->processed_text);
+        }
+    }
+
+    /**
+     * Validates a token.
+     *
+     * @access private
+     * @param  string $token The token string
+     * @return bool Returns true if the token is valid, otherwise returns false.
+     */
+    private function isValid(string $token): bool
+    {
+        // Just to be sure that the token's name won't collide with B8's internal variables
+        if (substr($token, 0, 3) == 'b8*') {
+            return false;
+        }
+
+        // Validate the size of the token
+        $len = strlen($token);
+        if ($len < $this->config['min_size'] || $len > $this->config['max_size']) {
+            return false;
+        }
+
+        // We may want to exclude pure numbers
+        if (
+            $this->config['allow_numbers'] === false
+            && preg_match($this->regexp['numbers'], $token) > 0
+        ) {
+            return false;
+        }
+
+        // Token is okay
+        return true;
+    }
+
+    /**
+     * Does a raw split.
+     *
+     * @access private
+     * @param  string $text
+     * @return void
+     */
+    private function rawSplit(string $text): void
+    {
+        foreach (preg_split($this->regexp['raw_split'], $text) as $word) {
+            // Check the word and add it to the token list if it's valid
+            $this->addToken($word);
+        }
+    }
+
+    /**
+     * Gets HTML or BBCode markup, depending on the regexp used.
+     *
+     * @access private
+     * @param  string $text
+     * @param  string $regexp
+     * @return void
+     */
+    private function getMarkup(string $text, string $regexp): void
+    {
+        // Search for the markup
+        preg_match_all($regexp, $text, $raw_tokens);
+        foreach ($raw_tokens[1] as $word) {
+            $actual_word = $word;
+
+            // If the tag has parameters, just use the tag itself
+            if (strpos($word, ' ') !== false) {
+                preg_match($this->regexp['tagname'], $word, $match);
+                $actual_word = $match[1];
+                $word = "$actual_word..." . substr($word, -1);
+            }
+
+            // Try to add the found tokens to the list
+            $this->addToken($word, $actual_word);
+        }
+    }
+}
