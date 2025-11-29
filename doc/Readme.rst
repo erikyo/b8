@@ -57,7 +57,7 @@ Not much! You just need PHP (at least 5, 4 is not supported anymore) and a datab
 
 The probably most efficient way to store the wordlist is using a `Berkeley DB <http://oracle.com/technetwork/products/berkeleydb/downloads/index.html>`_. This also has been the original approach, and b8 comes with an appropriate storage backend. Of course, other databases can be used as well, as an example, there's also a backend using a mysqli object-style `MySQL <http://mysql.com/>`_ connection.
 
-It should be quite trivial to create a storage backend for whatever database you want to use. Simply write a class extending ``\b8\storage\storage_base`` which implements the abstract functions listed there.
+It should be quite trivial to create a storage backend for whatever database you want to use. Simply write a class extending ``\B8\storage\storage_base`` which implements the abstract functions listed there.
 
 What's different?
 -----------------
@@ -196,7 +196,7 @@ All these values can be set in the "config_b8" array (the first parameter) passe
 These are some basic settings telling b8 which backend classes to use:
 
     **storage**
-        This defines which storage backend will be used to save b8's wordlist. It's the name of the class in the ``b8\storage`` namespace. b8 comes with two example backends, the default setting is ``dba`` (string). It should be quite easy to add a custom backend. Simply create a class fitting your needs that extends ``b8\storage\storage_base`` and implements it's abstract functions.
+        This defines which storage backend will be used to save b8's wordlist. It's the name of the class in the ``\B8\storage`` namespace. b8 comes with two example backends, the default setting is ``dba`` (string). It should be quite easy to add a custom backend. Simply create a class fitting your needs that extends ``\B8\storage\storage_base`` and implements it's abstract functions.
 
         *dba*
             This one uses a `Berkeley DB <http://oracle.com/technetwork/products/berkeleydb/downloads/index.html>`_, the original storing approach of the filter. All content is saved in a single file, you don't need special user rights or a database server. Most probably a good choice, as this is very performant and fits exactly to b8's needs. |br|
