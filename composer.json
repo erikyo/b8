@@ -2,24 +2,33 @@
   "name": "l3u/b8",
   "description": "b8 is a statistical (Bayesian) spam filter implemented in PHP",
   "minimum-stability": "stable",
-  "license": "proprietary",
+  "license": "LGPL-3.0-or-later",
   "authors": [
     {
       "name": "Tobias Leupold",
       "email": "l3u@nasauber.de"
     }
   ],
+  "require": {
+    "php": "^7.4",
+    "ext-pdo": "*",
+    "ext-dba": "*",
+    "ext-sqlite3": "*",
+    "ext-mysqli": "*"
+  },
   "require-dev": {
-    "php": "^7.2|^8.0",
-    "dealerdirect/phpcodesniffer-composer-installer": "^0.7",
-    "phpunit/phpunit": "^9.6",
-    "squizlabs/php_codesniffer": "^3.13.4",
-    "friendsofphp/php-cs-fixer": "3"
+    "phpunit/phpunit": "^10.0",
+    "squizlabs/php_codesniffer": "^3.7",
+    "friendsofphp/php-cs-fixer": "^3.0",
+    "phpstan/phpstan": "^1.10",
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.7"
   },
   "scripts": {
-    "phpcs": "phpcs B8 --standard=PSR2",
-    "phpcbf": "phpcbf B8 --standard=PSR2",
-    "test": "phpunit"
+    "test": "phpunit",
+    "phpcs": "phpcs B8 --standard=PSR12",
+    "phpcbf": "phpcbf B8 --standard=PSR12",
+    "phpstan": "phpstan analyse",
+    "fix-cs": "php-cs-fixer fix B8"
   },
   "autoload": {
     "psr-4": {
@@ -35,10 +44,5 @@
     "allow-plugins": {
       "dealerdirect/phpcodesniffer-composer-installer": true
     }
-  },
-  "require": {
-    "ext-pdo": "*",
-    "ext-dba": "*",
-    "ext-sqlite3": "*"
   }
 }
