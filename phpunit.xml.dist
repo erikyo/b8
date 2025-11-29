@@ -13,7 +13,7 @@
 
     <coverage processUncoveredFiles="true">
         <include>
-            <directory suffix=".php">./b8</directory>
+            <directory suffix=".php">./B8</directory>
         </include>
     </coverage>
 
