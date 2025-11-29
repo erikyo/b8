@@ -1,6 +1,6 @@
 <?php
 
-namespace CF7_AntiSpam\Tests;
+namespace Testing\Tests;
 
 use B8\B8;
 use PHPUnit\Framework\TestCase;
