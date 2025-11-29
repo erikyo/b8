@@ -27,6 +27,9 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-progress
 
+      - name: Regenerate the autoloader files
+        run: composer dump-autoload --optimize
+
       - name: Run PHP Code Sniffer
         run: composer run phpcs
 
