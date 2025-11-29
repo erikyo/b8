@@ -1,6 +1,6 @@
 .. SPDX-FileCopyrightText: 2006-2022 Tobias Leupold <tl at stonemx dot de>
 
-SPDX-License-Identifier: CC-BY-SA-4.0
+   SPDX-License-Identifier: CC-BY-SA-4.0
 
 .. |br| raw:: html
 
@@ -11,7 +11,7 @@ SPDX-License-Identifier: CC-BY-SA-4.0
     &#116;&#111;&#98;&#105;&#97;&#115;&nbsp;&#46;&nbsp;&#108;&#101;&#117;&#112;&#111;&#108;&#100;&nbsp;&#97;&#116;&nbsp;&#103;&#109;&#120;&nbsp;&#46;&nbsp;&#100;&#101;
 
 .. meta::
-:viewport: width=device-width, initial-scale=1
+   :viewport: width=device-width, initial-scale=1
 
 .. section-numbering::
 
@@ -221,12 +221,12 @@ Configuration of the storage backend
 The used storage backend itself defines what it wants to have passed in it's configuration array. The three example backends have this configuration:
 
 The Berkeley DB (DBA) backend
-`````````````````````````````
+--------------------
 **resource**
     The DBA resource to use (to be set up via e.g. ``$db = dba_open('wordlist.db', 'w', 'db4');``).
 
 The (example) MySQL backend
-```````````````````````````
+--------------------
 
 **resource**
     The mysqli object to use (to be created via e.g. ``$mysql = new mysqli('localhost', 'user', 'pass', 'database');``).
@@ -235,7 +235,7 @@ The (example) MySQL backend
     The table containing b8's wordlist.
 
 The (example) SQLite3 backend
-`````````````````````````````
+--------------------
 **resource**
 The SQLite3 object to use (to be created via e.g. ``$sqlite = new SQLite3('wordlist.db');``).
 
@@ -243,7 +243,7 @@ The SQLite3 object to use (to be created via e.g. ``$sqlite = new SQLite3('wordl
 The table name. Defaults to ``b8_wordlist`` if not specified.
 
 Configuration of the lexer
---------------------------
+--------------------
 
 The lexer disassembles the text we want to analyze to single words ("tokens"). The way it does this can be customized.
 
