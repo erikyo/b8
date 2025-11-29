@@ -7,4 +7,6 @@ doc
 # the cache directory
 *.cache
 
-
+# IDE
+*.idea
+*.vscode
