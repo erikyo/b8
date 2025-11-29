@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace B8;
 
-use B8\lexer\IdfCalculator;
+use B8\Lexer\IdfCalculator;
 use Exception;
 
 class B8
@@ -116,12 +116,12 @@ class B8
         $this->degenerator = new $degenerator_class($enhanced_degenerator_config);
 
         // Set up the storage backend first (needed for IDF calculator)
-        $class = '\\B8\\storage\\' . $this->config['storage'];
+        $class = '\\B8\\Storage\\' . ucfirst($this->config['storage']);
         $this->storage = new $class($config_storage, $this->degenerator);
 
         // Initialize the IDF calculator if TF-IDF is enabled
         if ($this->config['use_tfidf'] === true) {
-            $this->idf_calc = new \B8\lexer\IdfCalculator($this->storage);
+            $this->idf_calc = new \B8\Lexer\IdfCalculator($this->storage);
         }
 
         // Determine which lexer to use based on enhanced features
@@ -144,7 +144,7 @@ class B8
     {
         // If n-grams are enabled, use enhanced degenerator
         if ($this->config['use_ngrams'] === true) {
-            $enhanced_class = '\\B8\\degenerator\\enhanced';
+            $enhanced_class = '\\B8\\Degenerator\\Enhanced';
             if (class_exists($enhanced_class)) {
                 return $enhanced_class;
             }
@@ -158,7 +158,7 @@ class B8
         }
 
         // Use configured degenerator (standard by default)
-        return '\\B8\\degenerator\\' . $this->config['degenerator'];
+        return '\\B8\\Degenerator\\' . ucfirst($this->config['degenerator']);
     }
 
     /**
@@ -194,7 +194,7 @@ class B8
         // If enhanced features are requested, use enhanced lexer
         if ($this->config['use_tfidf'] === true || $this->config['use_ngrams'] === true) {
             // Check if enhanced lexer exists, otherwise fall back to standard
-            $enhanced_class = '\\B8\\lexer\\Enhanced';
+            $enhanced_class = '\\B8\\Lexer\\Enhanced';
             if (class_exists($enhanced_class)) {
                 return $enhanced_class;
             }
@@ -208,7 +208,7 @@ class B8
         }
 
         // Use standard lexer
-        return '\\B8\\lexer\\' . $this->config['lexer'];
+        return '\\B8\\Lexer\\' . ucfirst($this->config['lexer']);
     }
 
     /**
@@ -277,7 +277,7 @@ class B8
 
         // Get TF-IDF weights if available
         $tfidf_weights = [];
-        if ($this->config['use_tfidf'] && $this->lexer instanceof \B8\lexer\Enhanced) {
+        if ($this->config['use_tfidf'] && $this->lexer instanceof \B8\Lexer\Enhanced) {
             $tfidf_weights = $this->lexer->getAllTfidfWeights();
         }
 
@@ -563,7 +563,7 @@ class B8
     private function getTrainingTokens(string $text)
     {
         // If using enhanced lexer with TF-IDF, we need to get raw tokens for training
-        if ($this->config['use_tfidf'] === true && $this->lexer instanceof \B8\lexer\Enhanced) {
+        if ($this->config['use_tfidf'] === true && $this->lexer instanceof \B8\Lexer\Enhanced) {
             // Create a temporary lexer without TF-IDF for training
             $config = [
                 'use_tfidf' => false,
@@ -573,7 +573,7 @@ class B8
             // Merge with any custom lexer config
             // This is a simplified approach; in production, you'd want to preserve
             // all original lexer configuration
-            $temp_lexer = new \B8\lexer\Enhanced($config);
+            $temp_lexer = new \B8\Lexer\Enhanced($config);
             return $temp_lexer->getTokens($text);
         }
 

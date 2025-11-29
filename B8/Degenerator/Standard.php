@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace B8\degenerator;
+namespace B8\Degenerator;
 
 use Exception as ExceptionAlias;
 

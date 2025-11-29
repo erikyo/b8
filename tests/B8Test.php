@@ -161,7 +161,7 @@ class B8Test extends TestCase
         $idf = $b8->getIdfCalculator();
 
         // Check that the object is of the correct type (assuming the namespace)
-        $this->assertInstanceOf(\B8\lexer\IdfCalculator::class, $idf);
+        $this->assertInstanceOf(\B8\Lexer\IdfCalculator::class, $idf);
 
         // Check the total number of documents
         $this->assertEquals(3, $idf->getTotalDocuments(), "The total number of documents should be 3.");
@@ -231,7 +231,7 @@ class B8Test extends TestCase
             'min_size' => 3,
             'use_ngrams' => false
         ];
-        $lexer = new \B8\lexer\Enhanced($config);
+        $lexer = new \B8\Lexer\Enhanced($config);
 
         $tokens = $lexer->getTokens("common rare");
         $weights = $lexer->getAllTfidfWeights();

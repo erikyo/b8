@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace B8\storage;
+namespace B8\Storage;
 
 use B8\B8;
 
@@ -19,7 +19,7 @@ use B8\B8;
 class DBA extends StorageBase
 {
     /**
-     * @var resource|false
+     * @var resource|false|\Dba\Connection
      */
     private $db;
 
@@ -31,7 +31,7 @@ class DBA extends StorageBase
     protected function initialize(): bool
     {
         // Use the existing connection
-        if (!is_resource($this->db)) {
+        if (!is_resource($this->db) && !$this->db instanceof \Dba\Connection) {
             return false;
         }
 
@@ -62,11 +62,10 @@ class DBA extends StorageBase
 
     protected function setupBackend(array $config)
     {
-        if (
-            !isset($config['resource'])
-            || !is_resource($config['resource'])
-            || get_resource_type($config['resource']) !== 'dba'
-        ) {
+        $is_resource = isset($config['resource']) && is_resource($config['resource']) && get_resource_type($config['resource']) === 'dba';
+        $is_object = isset($config['resource']) && $config['resource'] instanceof \Dba\Connection;
+
+        if (!$is_resource && !$is_object) {
             throw new \Exception(DBA::class . ": No valid DBA resource passed");
         }
         $this->db = $config['resource'];

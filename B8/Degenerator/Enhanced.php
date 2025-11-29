@@ -10,7 +10,7 @@
  * @package b8
  */
 
-namespace B8\degenerator;
+namespace B8\Degenerator;
 
 use Exception;
 

@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace B8\storage;
+namespace B8\Storage;
 
 use B8\B8;
 use Exception;
@@ -20,7 +20,7 @@ use Exception;
 abstract class StorageBase
 {
     /**
-     * @var \B8\degenerator\Standard|\B8\degenerator\Enhanced
+     * @var \B8\Degenerator\Standard|\B8\Degenerator\Enhanced
      */
     protected object $degenerator;
 

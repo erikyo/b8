@@ -13,7 +13,7 @@
 
 declare(strict_types=1);
 
-namespace B8\lexer;
+namespace B8\Lexer;
 
 class Enhanced
 {

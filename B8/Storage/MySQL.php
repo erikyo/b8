@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace B8\storage;
+namespace B8\Storage;
 
 use B8\B8;
 use Exception;

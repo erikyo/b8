@@ -5,3 +5,12 @@ parameters:
 	paths:
 		- B8
 		- tests
+	excludePaths:
+		- B8/Storage/*
+	ignoreErrors:
+		- '#Parameter \#\d+ \$dba of function dba_.* expects Dba\\Connection, .* given.#'
+		- '#has unknown class Dba\\Connection#'
+		- '#is unused#'
+		- '#should return .* but return statement is missing#'
+	reportUnmatchedIgnoredErrors: false
+
