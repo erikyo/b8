@@ -4,31 +4,75 @@
 //
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
-namespace b8\storage;
+declare(strict_types=1);
+
+namespace B8\storage;
+
+use B8\B8;
 
 /**
  * A Berkeley DB (DBA) storage backend
  *
- * @package b8
+ * @package B8
  */
 
-class dba extends storage_base
+class DBA extends StorageBase
 {
+    /**
+     * @var resource|false
+     */
+    private $db;
 
-    private $db = null;
-
-    protected function setup_backend(array $config)
+    /**
+     * We should create the table if it doesn't exist and fill it with the internals.
+     *
+     * @return bool True on success (the database was initialized), false otherwise
+     */
+    protected function initialize(): bool
     {
-        if (! isset($config['resource'])
-            || gettype($config['resource']) !== 'resource'
-            || get_resource_type($config['resource']) !== 'dba') {
+        // Use the existing connection
+        if (!is_resource($this->db)) {
+            return false;
+        }
 
-            throw new \Exception(dba::class . ": No valid DBA resource passed");
+        // Storing the necessary internal variables.
+        $internals = ['b8*dbversion' => '3', 'b8*texts' => '0 0'];
+        foreach ($internals as $key => $value) {
+            if (dba_insert($key, $value, $this->db) === false) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function isInitialized(): bool
+    {
+        // Trying to read data from the database
+        if ($this->db) {
+            return dba_fetch(B8::INTERNALS_DBVERSION, $this->db) !== false;
+        }
+        return false;
+    }
+
+    public function isUpToDate(): bool
+    {
+        return intval(dba_fetch(B8::INTERNALS_DBVERSION, $this->db)) === B8::DBVERSION;
+    }
+
+
+    protected function setupBackend(array $config)
+    {
+        if (
+            !isset($config['resource'])
+            || !is_resource($config['resource'])
+            || get_resource_type($config['resource']) !== 'dba'
+        ) {
+            throw new \Exception(DBA::class . ": No valid DBA resource passed");
         }
         $this->db = $config['resource'];
     }
 
-    protected function fetch_token_data(array $tokens)
+    protected function fetchTokenData(array $tokens): array
     {
         $data = [];
 
@@ -41,49 +85,52 @@ class dba extends storage_base
                 $split_data = explode(' ', $count);
 
                 // As an internal variable may have just one single value, we have to check for this
-                $count_ham  = isset($split_data[0]) ? (int) $split_data[0] : null;
+                $count_ham = isset($split_data[0]) ? (int) $split_data[0] : null;
                 $count_spam = isset($split_data[1]) ? (int) $split_data[1] : null;
 
                 // Append the parsed data
-                $data[$token] = [ \b8\b8::KEY_COUNT_HAM  => $count_ham,
-                                  \b8\b8::KEY_COUNT_SPAM => $count_spam ];
+                $data[$token] = [
+                    B8::KEY_COUNT_HAM => $count_ham,
+                    B8::KEY_COUNT_SPAM => $count_spam
+                ];
             }
         }
 
         return $data;
     }
 
-    private function assemble_count_value(array $count)
+    private function assembleCountValue(array $count): string
     {
         // Assemble the count data string
-        $count_value = $count[\b8\b8::KEY_COUNT_HAM] . ' ' . $count[\b8\b8::KEY_COUNT_SPAM];
+        $count_value = $count[B8::KEY_COUNT_HAM] . ' ' . $count[B8::KEY_COUNT_SPAM];
         // Remove whitespace from data of the internal variables
-        return(rtrim($count_value));
+        return rtrim($count_value);
     }
 
-    protected function add_token(string $token, array $count)
+    protected function addToken(string $token, array $count): bool
     {
-        return dba_insert($token, $this->assemble_count_value($count), $this->db);
+        return dba_insert($token, $this->assembleCountValue($count), $this->db);
     }
 
-    protected function update_token(string $token, array $count)
+    protected function updateToken(string $token, array $count): bool
     {
-        return dba_replace($token, $this->assemble_count_value($count), $this->db);
+        return dba_replace($token, $this->assembleCountValue($count), $this->db);
     }
 
-    protected function delete_token(string $token)
+    protected function deleteToken(string $token): bool
     {
         return dba_delete($token, $this->db);
     }
 
-    protected function start_transaction()
+    protected function startTransaction(): void
+    {
+        if (function_exists('dba_sync')) {
+            dba_sync($this->db);
+        }
+    }
+
+    protected function finishTransaction(): void
     {
         return;
     }
-
-    protected function finish_transaction()
-    {
-        return;
-    }
-
 }
